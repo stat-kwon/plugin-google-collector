@@ -44,15 +44,15 @@ class SubscriptionManager(ResourceManager):
             bigquery_config = subscription.get("bigqueryConfig")
 
             subscription_display = {
-                "delivery_type": self._make_delivery_type(push_config, bigquery_config),
-                "message_ordering": self._change_boolean_to_enabled_or_disabled(
+                "deliveryType": self._make_delivery_type(push_config, bigquery_config),
+                "messageOrdering": self._change_boolean_to_enabled_or_disabled(
                     subscription.get("enableMessageOrdering")
                 ),
-                "exactly_once_delivery": self._change_boolean_to_enabled_or_disabled(
+                "exactlyOnceDelivery": self._change_boolean_to_enabled_or_disabled(
                     subscription.get("enableExactlyOnceDelivery")
                 ),
                 "attachment": self._make_enable_attachment(subscription.get("topic")),
-                "retain_acked_messages": self._make_retain_yes_or_no(
+                "retainAckedMessages": self._make_retain_yes_or_no(
                     subscription.get("retainAckedMessages")
                 ),
             }
@@ -62,7 +62,7 @@ class SubscriptionManager(ResourceManager):
             ):
                 subscription_display.update(
                     {
-                        "retention_duration": self._make_time_to_dhms_format(
+                        "retentionDuration": self._make_time_to_dhms_format(
                             message_reduction_duration
                         )
                     }
@@ -73,7 +73,7 @@ class SubscriptionManager(ResourceManager):
                 subscription_display.update(
                     {
                         "ttl": ttl,
-                        "subscription_expiration": self._make_expiration_description(
+                        "subscriptionExpiration": self._make_expiration_description(
                             ttl
                         ),
                     }
@@ -82,7 +82,7 @@ class SubscriptionManager(ResourceManager):
             if ack_deadline_seconds := subscription.get("ackDeadlineSeconds"):
                 subscription_display.update(
                     {
-                        "ack_deadline_seconds": self._make_time_to_dhms_format(
+                        "ackDeadlineSeconds": self._make_time_to_dhms_format(
                             ack_deadline_seconds
                         )
                     }
@@ -91,12 +91,12 @@ class SubscriptionManager(ResourceManager):
             if retry_policy := subscription.get("retryPolicy"):
                 subscription_display.update(
                     {
-                        "retry_policy": {
+                        "retryPolicy": {
                             "description": "Retry after exponential backoff delay",
-                            "minimum_backoff": self._make_time_to_dhms_format(
+                            "minimumBackoff": self._make_time_to_dhms_format(
                                 retry_policy.get("minimumBackoff")
                             ),
-                            "maximum_backoff": self._make_time_to_dhms_format(
+                            "maximumBackoff": self._make_time_to_dhms_format(
                                 retry_policy.get("maximumBackoff")
                             ),
                         }
@@ -104,7 +104,7 @@ class SubscriptionManager(ResourceManager):
                 )
             else:
                 subscription_display.update(
-                    {"retry_policy": {"description": "Retry immediately"}}
+                    {"retryPolicy": {"description": "Retry immediately"}}
                 )
 
             subscription.update(
