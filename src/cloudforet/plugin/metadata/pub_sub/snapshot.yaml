@@ -1,7 +1,9 @@
 search:
   fields:
-    - Schema ID: data.id
-    - Schema type: data.schemaType
+    - Snapshot ID: data.id
+    - Topic name: data.topic
+    - Expiration: data.expireTime
+      type: datetime
     - Project: data.project
 
 table:
@@ -9,34 +11,17 @@ table:
     key: data.id
     desc: true
   fields:
-    - Schema ID: data.id
-    - Schema type: data.schemaType
-      type: enum
-      enums:
-        - AVRO: red.500
-        - PROTOCOL_BUFFER: blue.500
-        - TYPE_UNSPECIFIED: yellow.500
+    - Snapshot ID: data.id
+    - Topic name: data.topic
+    - Expiration: data.expireTime
+      type: datetime
     - Project: data.project
 
 tab.0:
   name: Details
   items:
-    - name: Schema
-      type: item
-      fields:
-        - Schema ID: data.id
-        - Schema type: data.schemaType
-          type: enum
-          enums:
-            - AVRO: red.500
-            - PROTOCOL_BUFFER: blue.500
-            - TYPE_UNSPECIFIED: yellow.500
-        - Project: data.project
-    - name: Definition
-      type: item
-      fields:
-        - Definition: data.display.outputDisplay
-          type: more
-          popup_key: data.definition
-          popup_name: Definition
-          popup_type: raw
+    - Snapshot ID: data.id
+    - Topic name: data.topic
+    - Expiration: data.expireTime
+      type: datetime
+    - Project: data.project

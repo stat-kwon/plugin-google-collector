@@ -1,42 +1,86 @@
 search:
   fields:
-    - Schema ID: data.id
-    - Schema type: data.schemaType
+    - Topic ID: data.id
+    - Encryption key: data.display.encryptionKey
+    - Topic name: data.name
+    - Retention: data.display.retention
     - Project: data.project
+    - Schema name: data.schemaSettings.schema
+    - Message encoding: data.schemaSettings.encoding
+    - Subscription count: data.display.subscriptionCount
 
 table:
   sort:
     key: data.id
     desc: true
   fields:
-    - Schema ID: data.id
-    - Schema type: data.schemaType
+    - Encryption key: data.display.encryptionKey
       type: enum
       enums:
-        - AVRO: red.500
-        - PROTOCOL_BUFFER: blue.500
-        - TYPE_UNSPECIFIED: yellow.500
+        - Google managed: primary
+          type: badge
+        - Customer managed: indigo.500
+          type: badge
+    - Topic name: data.name
+    - Retention: data.display.retention
+    - Subscription count: data.display.subscriptionCount
     - Project: data.project
+    - Schema name: data.schemaSettings.schema
+    - Message encoding: data.schemaSettings.encoding
 
 tab.0:
   name: Details
   items:
-    - name: Schema
+    - name: Topic Details
       type: item
       fields:
-        - Schema ID: data.id
-        - Schema type: data.schemaType
+        - Topic ID: data.topicId
+        - Project: data.project
+        - Encryption key: data.display.encryptionKey
           type: enum
           enums:
-            - AVRO: red.500
-            - PROTOCOL_BUFFER: blue.500
-            - TYPE_UNSPECIFIED: yellow.500
-        - Project: data.project
-    - name: Definition
-      type: item
+            - Google managed: primary
+              type: badge
+            - Customer managed: indigo.500
+              type: badge
+        - Schema name: data.schemaSettings.schema
+        - Message encoding: data.schemaSettings.encoding
+        - Subscription count: data.display.subscriptionCount
+        - Retention duration: data.display.retention
+
+tab.1:
+  name: Subscriptions
+  items:
+    - name: Subscriptions
+      type: simple-table
+      root_path: data.subscriptions
       fields:
-        - Definition: data.display.outputDisplay
-          type: more
-          popup_key: data.definition
-          popup_name: Definition
-          popup_type: raw
+        - Subscription ID: id
+        - State: state
+          type: enum
+          enums:
+            - ACTIVE: green.500
+            - RESOURCE_ERROR: red.500
+        - Delivery type: deliveryType
+          type: enum
+          enums:
+            - Push: primary
+              type: badge
+            - Pull: indigo.500
+              type: badge
+            - BigQuery: coral.600
+              type: badge
+        - Subscription name: name
+
+tab.2:
+  name: Snapshots
+  items:
+    - name: Snapshots
+      type: simple-table
+      root_path: data.snapshots
+      fields:
+        - Snapshot ID: id
+        - Snapshot name: name
+        - Expiration: expireTime
+          type: datetime
+        - Topic: topic

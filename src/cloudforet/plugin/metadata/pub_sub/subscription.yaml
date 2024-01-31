@@ -1,42 +1,86 @@
 search:
   fields:
-    - Schema ID: data.id
-    - Schema type: data.schemaType
+    - Subscription ID: data.id
+    - Status: data.status
+    - Delivery type: data.display.deliveryType
+    - Ack deadline: data.ackDeadlineSeconds
+    - Retention: data.display.retentionDuration
+    - Message ordering: data.display.messageOrdering
+    - Exactly once delivery: data.display.exactlyOnceDelivery
+    - Expiration: data.display.ttl
+    - Attachment: data.display.attachment
+    - Subscription name: data.name
     - Project: data.project
+    - Max delivery attempts (dead_letter): data.deadLetterPolicy.maxDeliveryAttempts
 
 table:
   sort:
     key: data.id
     desc: true
   fields:
-    - Schema ID: data.id
-    - Schema type: data.schemaType
+    - Status: data.status
       type: enum
       enums:
-        - AVRO: red.500
-        - PROTOCOL_BUFFER: blue.500
-        - TYPE_UNSPECIFIED: yellow.500
+        - ACTIVE: green.500
+        - RESOURCE_ERROR: red.500
+        - STATE_UNSPECIFIED: red.500
+    - Subscription ID: data.id
+    - Delivery type: data.display.deliveryType
+      type: enum
+      enums:
+        - Push: primary
+          type: badge
+        - Pull: indigo.500
+          type: badge
+        - BigQuery: coral.600
+          type: badge
+    - Topic name: data.topic
+    - Ack deadline: data.display.ackDeadlineSeconds
+    - Retention: data.display.retentionDuration
+    - Message ordering: data.display.messageOrdering
+    - Exactly once delivery: data.display.exactlyOnceDelivery
+    - Expiration: data.display.ttl
+    - Attachment: data.display.attachment
+      type: enum
+      enums:
+        - Attached: indigo.500
+          type: badge
+        - Unattached: red.500
+          type: badge
+    - Push endpoint: data.pushConfig.pushEndpoint
+    - Subscription name: data.name
     - Project: data.project
+    - Dead letter topic: data.deadLetterPolicy.deadLetterTopic
+    - Maximum delivery attempts: data.deadLetterPolicy.maxDeliveryAttempts
+    - Retry policy: data.display.retryPolicy.description
+    - Minimum backoff duration: data.display.retryPolicy.minimumBackoff
+    - Maximum backoff duration: data.display.retryPolicy.maximumBackoff
 
 tab.0:
   name: Details
   items:
-    - name: Schema
+    - name: Subscription Details
       type: item
       fields:
-        - Schema ID: data.id
-        - Schema type: data.schemaType
+        - Delivery type: data.display.deliveryType
           type: enum
           enums:
-            - AVRO: red.500
-            - PROTOCOL_BUFFER: blue.500
-            - TYPE_UNSPECIFIED: yellow.500
-        - Project: data.project
-    - name: Definition
-      type: item
-      fields:
-        - Definition: data.display.outputDisplay
-          type: more
-          popup_key: data.definition
-          popup_name: Definition
-          popup_type: raw
+            - Push: primary
+              type: badge
+            - Pull: indigo.500
+              type: badge
+            - BigQuery: coral.600
+              type: badge
+        - Subscription expiration: data.display.subscriptionExpiration
+        - Acknowledgement deadline: data.display.ackDeadlineSeconds
+        - Subscription filter: data.filter
+        - Subscription message retention duration: data.display.retentionDuration
+        - Retain acknowledged messages: data.display.retainAckedMessages
+        - Exactly once delivery: data.display.exactlyOnceDelivery
+        - Message ordering: data.display.messageOrdering
+        - Dead letter topic: data.deadLetterPolicy.deadLetterTopic
+        - Maximum delivery attempts: data.deadLetterPolicy.maxDeliveryAttempts
+        - Retry policy: data.display.retryPolicy.description
+        - Minimum backoff duration: data.display.retryPolicy.minimumBackoff
+        - Maximum backoff duration: data.display.retryPolicy.maximumBackoff
+        - Push endpoint: data.pushConfig.pushEndpoint
