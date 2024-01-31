@@ -104,7 +104,7 @@ class TopicManager(ResourceManager):
                 account=project_id,
                 tags=labels,
                 data=topic,
-                region_code="Global",
+                region_code="global",
                 instance_type="",
                 instance_size=0,
                 reference={

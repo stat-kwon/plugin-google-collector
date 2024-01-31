@@ -4,7 +4,10 @@ from spaceone.core.error import *
 from spaceone.core.manager import BaseManager
 from spaceone.inventory.plugin.collector.lib import *
 
-from cloudforet.plugin.config.global_conf import CLOUD_LOGGING_RESOURCE_TYPE_MAP
+from cloudforet.plugin.config.global_conf import (
+    CLOUD_LOGGING_RESOURCE_TYPE_MAP,
+    REGION_INFO,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -13,6 +16,7 @@ __all__ = ["ResourceManager"]
 
 class ResourceManager(BaseManager):
     service = None
+    collected_region_codes = []
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -42,6 +46,8 @@ class ResourceManager(BaseManager):
         try:
             yield from self.collect_cloud_service_type()
             yield from self.collect_cloud_service(options, secret_data, schema)
+            yield from self.collect_region()
+
         except Exception as e:
             yield make_error_response(
                 error=e,
@@ -73,6 +79,15 @@ class ResourceManager(BaseManager):
                 ],
             )
 
+    def collect_region(self):
+        for region_code in self.collected_region_codes:
+            if region := self.match_region_info(region_code):
+                yield make_response(
+                    region=region,
+                    match_keys=[["region_code", "provider"]],
+                    resource_type="inventory.Region",
+                )
+
     @staticmethod
     def set_google_cloud_logging(service, cloud_service_type, project_id, resource_id):
         cloud_logging_info = CLOUD_LOGGING_RESOURCE_TYPE_MAP[service][
@@ -90,6 +105,27 @@ class ResourceManager(BaseManager):
                 }
             ],
         }
+
+    def match_region_info(self, region_code):
+        match_region_info = REGION_INFO.get(region_code)
+
+        if match_region_info:
+            region_info = match_region_info.copy()
+            region_info.update(
+                {
+                    "region_code": region_code,
+                    "provider": self.provider,
+                }
+            )
+            return region_info
+        return None
+
+    def set_region_code(self, region):
+        if region not in REGION_INFO:
+            region = "global"
+
+        if region not in self.collected_region_codes:
+            self.collected_region_codes.append(region)
 
     @abc.abstractmethod
     def create_cloud_service_type(self):

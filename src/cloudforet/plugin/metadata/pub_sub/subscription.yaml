@@ -28,7 +28,7 @@ table:
     - Delivery type: data.display.deliveryType
       type: enum
       enums:
-        - Push: primary
+        - Push: red.500
           type: badge
         - Pull: indigo.500
           type: badge
@@ -65,7 +65,7 @@ tab.0:
         - Delivery type: data.display.deliveryType
           type: enum
           enums:
-            - Push: primary
+            - Push: red.500
               type: badge
             - Pull: indigo.500
               type: badge

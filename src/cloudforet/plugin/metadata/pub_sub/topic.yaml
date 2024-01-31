@@ -17,7 +17,7 @@ table:
     - Encryption key: data.display.encryptionKey
       type: enum
       enums:
-        - Google managed: primary
+        - Google managed: red.500
           type: badge
         - Customer managed: indigo.500
           type: badge
@@ -39,7 +39,7 @@ tab.0:
         - Encryption key: data.display.encryptionKey
           type: enum
           enums:
-            - Google managed: primary
+            - Google managed: red.500
               type: badge
             - Customer managed: indigo.500
               type: badge
@@ -64,7 +64,7 @@ tab.1:
         - Delivery type: deliveryType
           type: enum
           enums:
-            - Push: primary
+            - Push: red.500
               type: badge
             - Pull: indigo.500
               type: badge

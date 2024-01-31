@@ -5,7 +5,7 @@ from cloudforet.plugin.config.global_conf import ASSET_URL
 from cloudforet.plugin.connector.pub_sub.schema import SchemaConnector
 from cloudforet.plugin.manager import ResourceManager
 
-_LOGGER = logging.getLogger("spaceone")
+_LOGGER = logging.getLogger(__name__)
 
 
 class SchemaManager(ResourceManager):
@@ -50,6 +50,7 @@ class SchemaManager(ResourceManager):
                     "display": display,
                 }
             )
+            self.set_region_code("global")
             yield make_cloud_service(
                 name=schema_name,
                 cloud_service_type=self.cloud_service_type,
@@ -57,7 +58,7 @@ class SchemaManager(ResourceManager):
                 provider=self.provider,
                 account=project_id,
                 data=schema,
-                region_code="Global",
+                region_code="global",
                 instance_type="",
                 instance_size=0,
                 reference={
