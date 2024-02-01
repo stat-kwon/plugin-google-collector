@@ -25,7 +25,7 @@ class FunctionGen1Manager(ResourceManager):
 
         self.cloud_service_group = "CloudFunctions"
         self.cloud_service_type = "Function"
-        self.metadata_path = "plugin/metadata/cloud_functions/function.yaml"
+        self.metadata_path = "plugin/metadata/cloud_functions/function_gen1.yaml"
 
     def create_cloud_service_type(self):
         return make_cloud_service_type(

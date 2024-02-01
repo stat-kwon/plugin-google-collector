@@ -1,0 +1,122 @@
+search:
+  fields:
+    - Status: data.display.state
+    - Environment: data.display.environment
+    - ID: data.display.functionId
+    - Last deployed: data.display.lastDeployed
+    - Region: region_code
+    - Trigger: data.display.trigger
+    - Event type: data.eventTrigger.eventType
+    - Runtime: data.display.runtime
+    - Memory allocated: data.display.memoryAllocated
+    - Timeout: data.display.timeout
+    - Executed function: data.display.executedFunction
+
+table:
+  sort:
+    key: data.id
+    desc: true
+    fields:
+      - Status: data.display.state
+        type: enum
+        enums:
+          - ACTIVE: green.500
+          - DELETING: yellow.500
+          - DEPLOY_IN_PROGRESS: yellow.500
+          - DELETE_IN_PROGRESS: yellow.500
+          - STATE_UNSPECIFIED: red.500
+          - FAILED: red.500
+          - UNKNOWN: red.500
+          - CLOUD_FUNCTION_STATUS_UNSPECIFIED: red.500
+          - OFFLINE: red.500
+      - Environment: data.display.environment
+      - ID: data.display.functionId
+      - Last deployed: data.display.lastDeployed
+      - Region: region_code
+      - Trigger: data.display.trigger
+      - Event type: data.eventTrigger.eventType
+      - Runtime: data.display.runtime
+      - Memory allocated: data.display.memoryAllocated
+      - Timeout: data.display.timeout
+      - Executed function: data.display.executedFunction
+
+tab.0:
+  name: Details
+  items:
+    - name: General Information
+      type: item
+      fields:
+        - Last deployed: data.display.lastDeployed
+        - Region: region_code
+        - Memory allocated: data.display.memoryAllocated
+        - Timeout: data.display.timeout
+        - Minimum instances: data.minInstances
+        - Maximum instances: data.maxInstances
+        - Service account: data.serviceAccountEmail
+        - Build Worker Pool: data.buildWorkerPool
+        - Container build log: data.buildId
+    - name: Networking Settings
+      type: item
+      fields:
+        - Ingress settings: data.display.ingressSettings
+        - VPC connector: data.vpcConnector
+        - VPC connector egress: data.display.vpcConnectorEgressSettings
+
+tab.1:
+  name: Source
+  items:
+    - name: Information
+      type: item
+      fields:
+        - Runtime: data.display.runtime
+        - Entry point: data.entryPoint
+        - Source location: data.display.sourceLocation
+    - name: Source code
+      type: simple-table
+      root_path: data.display.sourceCode
+      fields:
+        - File name: fileName
+        - Source: outputDisplay
+          type: more
+          popup_key: content
+          popup_name: Source
+          popup_type: raw
+
+tab.2:
+  name: Variables
+  items:
+    - name: Runtime environment variables
+      type: simple-table
+      root_path: data.display.runtimeEnvironmentVariables
+      fields:
+        - Name: key
+        - Value: value
+    - name: Build environment variables
+      type: simple-table
+      root_path: data.display.buildEnvironmentVariables
+      fields:
+        - Name: key
+        - Value: value
+    - name: Secrets
+      type: simple-table
+      root_path: data.serviceConfig.secretEnvironmentVariables
+      fields:
+        - Key: key
+        - Project ID: project_id
+        - Secret: secret
+        - Version: version
+
+tab.3:
+  name: Trigger
+  items:
+    - name: HTTPS
+      type: item
+      fields:
+        - Trigger URL: data.httpsTrigger.url
+    - name: Event Trigger
+      type: item
+      fields:
+        - Event provider: data.display.eventProvider
+        - Event type: data.eventTrigger.eventType
+        - Resource: data.eventTrigger.resource
+        - Service: data.eventTrigger.service
