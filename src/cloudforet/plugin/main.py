@@ -28,13 +28,10 @@ def collector_collect(params: dict) -> dict:
     if services := options.get("cloud_service_types"):
         for service in services:
             resource_mgrs = ResourceManager.get_manager_by_service(service)
-            for result in map(
-                lambda resource_mgr: resource_mgr().collect_resources(
-                    options, secret_data, schema
-                ),
-                resource_mgrs,
-            ):
-                yield result
+            for resource_mgr in resource_mgrs:
+                results = resource_mgr().collect_resources(options, secret_data, schema)
+                for result in results:
+                    yield result
     else:
         resource_mgrs = ResourceManager.list_managers()
         for manager in resource_mgrs:

@@ -1,6 +1,5 @@
 import abc
 import logging
-from spaceone.core.error import *
 from spaceone.core.manager import BaseManager
 from spaceone.inventory.plugin.collector.lib import *
 
@@ -34,10 +33,6 @@ class ResourceManager(BaseManager):
         for manager in cls.list_managers():
             if manager.service == service:
                 yield manager
-            else:
-                raise ERROR_INVALID_PARAMETER(
-                    key="service", reason="Not supported service"
-                )
 
     def collect_resources(self, options, secret_data, schema):
         _LOGGER.debug(

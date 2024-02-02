@@ -5,3 +5,4 @@ from cloudforet.plugin.manager.pub_sub.subscription import SubscriptionManager
 from cloudforet.plugin.manager.pub_sub.topic import TopicManager
 from cloudforet.plugin.manager.cloud_functions.function_gen1 import FunctionGen1Manager
 from cloudforet.plugin.manager.cloud_functions.function_gen2 import FunctionGen2Manager
+from cloudforet.plugin.manager.recommender.recommendation import RecommendationManager
