@@ -17,7 +17,7 @@ table:
       type: datetime
     - Project: data.project
 
-tab.0:
+tabs.0:
   name: Details
   items:
     - Snapshot ID: data.id

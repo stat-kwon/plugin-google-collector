@@ -18,7 +18,7 @@ table:
         - TYPE_UNSPECIFIED: yellow.500
     - Project: data.project
 
-tab.0:
+tabs.0:
   name: Details
   items:
     - name: Schema

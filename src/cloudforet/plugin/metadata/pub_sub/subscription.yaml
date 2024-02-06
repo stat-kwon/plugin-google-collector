@@ -56,7 +56,7 @@ table:
     - Minimum backoff duration: data.display.retryPolicy.minimumBackoff
     - Maximum backoff duration: data.display.retryPolicy.maximumBackoff
 
-tab.0:
+tabs.0:
   name: Details
   items:
     - name: Subscription Details

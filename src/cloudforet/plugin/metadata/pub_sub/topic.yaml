@@ -28,7 +28,7 @@ table:
     - Schema name: data.schemaSettings.schema
     - Message encoding: data.schemaSettings.encoding
 
-tab.0:
+tabs.0:
   name: Details
   items:
     - name: Topic Details
@@ -48,7 +48,7 @@ tab.0:
         - Subscription count: data.display.subscriptionCount
         - Retention duration: data.display.retention
 
-tab.1:
+tabs.1:
   name: Subscriptions
   items:
     - name: Subscriptions
@@ -72,7 +72,7 @@ tab.1:
               type: badge
         - Subscription name: name
 
-tab.2:
+tabs.2:
   name: Snapshots
   items:
     - name: Snapshots

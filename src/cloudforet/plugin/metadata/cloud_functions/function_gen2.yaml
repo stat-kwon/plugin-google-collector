@@ -40,7 +40,7 @@ table:
     - Timeout: data.display.timeout
     - Executed function: data.display.executedFunction
 
-tab.0:
+tabs.0:
   name: Details
   items:
     - name: General Information
@@ -62,7 +62,7 @@ tab.0:
         - VPC connector: data.serviceConfig.vpcConnector
         - VPC connector egress: data.display.vpcConnectorEgressSettings
 
-tab.1:
+tabs.1:
   name: Source
   items:
     - name: Information
@@ -82,7 +82,7 @@ tab.1:
           popup_name: Source
           popup_type: raw
 
-tab.2:
+tabs.2:
   name: Variables
   items:
     - name: Runtime environment variables
@@ -106,7 +106,7 @@ tab.2:
         - Secret: secret
         - Version: version
 
-tab.3:
+tabs.3:
   name: Trigger
   items:
     - name: HTTPS

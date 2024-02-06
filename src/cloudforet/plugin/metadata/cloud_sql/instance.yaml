@@ -30,7 +30,7 @@ table:
     - Service Account: data.serviceAccountEmailAddress
     - Auto Storage Increased Limit Size (GB): data.settings.storageAutoResizeLimit
 
-tab.0:
+tabs.0:
   name: Instance
   items:
     - name: Instance
@@ -51,7 +51,7 @@ tab.0:
         - Location: data.gceZone
         - Service Account: data.serviceAccountEmailAddress
 
-tab.1:
+tabs.1:
   name: Configuration
   items:
     - name: Configuration
@@ -72,7 +72,7 @@ tab.1:
             - SQL_AVAILABILITY_TYPE_UNSPECIFIED: blue.500
 
 
-tab.2:
+tabs.2:
   name: Connection
   items:
     - name: Connection
@@ -84,7 +84,7 @@ tab.2:
         - SSL certificates Creation Time: data.serverCaCert.createTime
         - SSL certificates Expiration Time: data.serverCaCert.expirationTime
 
-tab.3:
+tabs.3:
   name: Database
   items:
     - name: Database
@@ -97,7 +97,7 @@ tab.3:
         - Recovery Model: data.databases.sqlServerDatabaseDetails.recoveryModel
         - Self Link: data.databases.selfLink
 
-tab.4:
+tabs.4:
   name: User
   items:
     - name: User
@@ -113,7 +113,7 @@ tab.4:
           - Host: data.users.host
           - Server Roles: data.users.sqlServerUserDetails.serverRoles
 
-tab.5:
+tabs.5:
   name: Backup
   items:
     - name: Backup

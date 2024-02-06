@@ -30,7 +30,7 @@ table:
     - Resource Count: data.resourceCount
     - Cost Savings: data.costSavings
 
-tab.0:
+tabs.0:
   name: Details
   items:
     - name: Recommender Details
@@ -56,7 +56,7 @@ tab.0:
             - Lowest: gray.500
             - Unspecified: black
 
-tab.1:
+tabs.1:
   name: Recommendations
   items:
     - name: Recommendations
