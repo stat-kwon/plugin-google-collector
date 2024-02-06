@@ -1,0 +1,147 @@
+search:
+  fields:
+    - Name: data.name
+    - State: data.state
+    - Type: data.databaseVersion
+    - Project: data.project
+    - Region: data.region
+    - Zone: data.gceZone
+    - Public IP Address: data.ipAddressesIpAddress
+
+table:
+  sort:
+    key: data.id
+    desc: true
+  fields:
+    - State: data.displayState
+      type: enum
+      enums:
+        - RUNNING: green.500
+        - UNKNOWN: gray.400
+        - ON-DEMAND: gray.400
+        - STOPPED: red.500
+    - Type: data.databaseVersion
+    - Project: data.project
+    - Public IP Address: data.ipAddresses # TODO: need to check list field
+    - Location: data.gce_zone
+    - Data Disk Size (GB): data.settings.dataDiskSizeGb
+    - Connection name: data.connectionName
+    - Location: data.gceZone
+    - Service Account: data.serviceAccountEmailAddress
+    - Auto Storage Increased Limit Size (GB): data.settings.storageAutoResizeLimit
+
+tab.0:
+  name: Instance
+  items:
+    - name: Instance
+      type: item
+      fields:
+        - Name: data.name
+        - State: data.displayState
+          type: enum
+          enums:
+            - RUNNING: green.500
+            - UNKNOWN: gray.400
+            - ON-DEMAND: gray.400
+            - STOPPED: red.500
+        - Type: data.databaseVersion
+        - Project: data.project
+        - Public IP Address: data.ipAddresses
+        - Connection name: data.connectionName
+        - Location: data.gceZone
+        - Service Account: data.serviceAccountEmailAddress
+
+tab.1:
+  name: Configuration
+  items:
+    - name: Configuration
+      type: item
+      fields:
+        - Auto Storage Increased: data.settings.storageAutoResize
+          type: enum
+          enums:
+            - true: indigo.500
+            - false: coral.500
+        - Auto Storage Increased Limit Size (GB): data.settings.storageAutoResizeLimit
+        - Point-in-time recovery: data.settings.storageAutoResize
+        - Availability Type: data.settings.availabilityType
+          type: enum
+          enums:
+            - ZONAL: red.500
+            - REGIONAL: yellow.500
+            - SQL_AVAILABILITY_TYPE_UNSPECIFIED: blue.500
+
+
+tab.2:
+  name: Connection
+  items:
+    - name: Connection
+      type: item
+      fields:
+        - Connection name: data.connectionName
+        - IP Address Type: data.ipAddresses
+        - Public IP Address: data.ipAddresses
+        - SSL certificates Creation Time: data.serverCaCert.createTime
+        - SSL certificates Expiration Time: data.serverCaCert.expirationTime
+
+tab.3:
+  name: Database
+  items:
+    - name: Database
+      type: item
+      fields:
+        - Name: data.databases.name
+        - charset: data.databases.charset
+        - collation: data.databases.collation
+        - Compatibility Level: data.databases.sqlServerDatabaseDetails.compatibilityLevel
+        - Recovery Model: data.databases.sqlServerDatabaseDetails.recoveryModel
+        - Self Link: data.databases.selfLink
+
+tab.4:
+  name: User
+  items:
+    - name: User
+      type: item
+      fields:
+        fields:
+          - User Name: data.users.name
+          - State: data.users.sqlServerUserDetails.disabled
+            type: enum
+            enums:
+              - true: indigo.500
+              - false: coral.500
+          - Host: data.users.host
+          - Server Roles: data.users.sqlServerUserDetails.serverRoles
+
+tab.5:
+  name: Backup
+  items:
+    - name: Backup
+      type: item
+      fields:
+        - Enabled: data.settings.backupConfiguration.enabled
+          type: enum
+          enums:
+            - true: indigo.500
+            - false: coral.500
+        - Location: data.settings.backupConfiguration.location
+        - Start Time: data.settings.backupConfiguration.startTime
+        - Binary Log Enabled: data.settings.backupConfiguration.binaryLogEnabled
+          type: enum
+          enums:
+            - true: indigo.500
+            - false: coral.500
+        - Replication Log Archiving Enabled: data.settings.backupConfiguration.replicationLogArchivingEnabled
+          type: enum
+          enums:
+            - true: indigo.500
+            - false: coral.500
+        - Point In Time Recovery Enabled: data.settings.backupConfiguration.pointInTimeRecoveryEnabled
+          type: enum
+          enums:
+            - true: indigo.500
+            - false: coral.500
+
+
+
+

@@ -84,6 +84,14 @@ class ResourceManager(BaseManager):
                 )
 
     @staticmethod
+    def set_google_cloud_monitoring(project_id, metric_type, resource_id, filters):
+        return {
+            "name": f"projects/{project_id}",
+            "resource_id": resource_id,
+            "filters": [{"metric_type": metric_type, "labels": filters}],
+        }
+
+    @staticmethod
     def set_google_cloud_logging(service, cloud_service_type, project_id, resource_id):
         cloud_logging_info = CLOUD_LOGGING_RESOURCE_TYPE_MAP[service][
             cloud_service_type

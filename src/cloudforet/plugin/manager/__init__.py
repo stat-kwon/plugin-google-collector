@@ -6,3 +6,4 @@ from cloudforet.plugin.manager.pub_sub.topic import TopicManager
 from cloudforet.plugin.manager.cloud_functions.function_gen1 import FunctionGen1Manager
 from cloudforet.plugin.manager.cloud_functions.function_gen2 import FunctionGen2Manager
 from cloudforet.plugin.manager.recommender.recommendation import RecommendationManager
+from cloudforet.plugin.manager.cloud_sql.instance import CloudSQLManager

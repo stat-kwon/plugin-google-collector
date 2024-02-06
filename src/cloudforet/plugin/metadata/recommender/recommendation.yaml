@@ -88,8 +88,6 @@ tab.1:
                 - MANAGEABILITY: green.500
                 - SECURITY: red.500
                 - CATEGORY_UNSPECIFIED: coral.500
-
-
         - State: state
           type: enum
           enums:
