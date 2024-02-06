@@ -20,8 +20,11 @@ table:
 tabs.0:
   name: Details
   items:
-    - Snapshot ID: data.id
-    - Topic name: data.topic
-    - Expiration: data.expireTime
-      type: datetime
-    - Project: data.project
+    - name: Snapshot
+      type: item
+      fields:
+        - Snapshot ID: data.id
+        - Topic name: data.topic
+        - Expiration: data.expireTime
+          type: datetime
+        - Project: data.project
