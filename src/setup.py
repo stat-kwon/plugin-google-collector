@@ -21,7 +21,7 @@ with open("VERSION", "r") as f:
     f.close()
 
 setup(
-    name="plugin-google-cloud-inven-collector",
+    name="plugin-google-collector",
     version=VERSION,
     description="Google cloud service inventory collector",
     long_description="",

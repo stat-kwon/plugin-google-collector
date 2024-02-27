@@ -1,4 +1,4 @@
-FROM cloudforet/python-core:1
+FROM cloudforet/python-core:2
 
 ENV PYTHONUNBUFFERED 1
 ENV SPACEONE_PORT 50051
@@ -10,7 +10,8 @@ RUN apt update && apt upgrade -y
 
 COPY pkg/*.txt ${PKG_DIR}/
 RUN pip install --upgrade pip && \
-    pip install --upgrade -r ${PKG_DIR}/pip_requirements.txt
+    pip install --upgrade -r ${PKG_DIR}/pip_requirements.txt && \
+    pip install --upgrade --pre spaceone-inventory
 
 COPY src ${SRC_DIR}
 ARG CACHEBUST=1
@@ -21,4 +22,4 @@ RUN python3 setup.py install && \
 EXPOSE ${SPACEONE_PORT}
 
 ENTRYPOINT ["spaceone"]
-CMD ["grpc", "spaceone.inventory"]
+CMD ["run", "plugin-server", "cloudforet.plugin"]
