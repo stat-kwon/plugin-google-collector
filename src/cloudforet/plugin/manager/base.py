@@ -130,6 +130,13 @@ class ResourceManager(BaseManager):
         if region not in self.collected_region_codes:
             self.collected_region_codes.append(region)
 
+    @staticmethod
+    def convert_labels_format(labels):
+        convert_labels = []
+        for k, v in labels.items():
+            convert_labels.append({"key": k, "value": v})
+        return convert_labels
+
     @abc.abstractmethod
     def create_cloud_service_type(self):
         raise NotImplementedError(

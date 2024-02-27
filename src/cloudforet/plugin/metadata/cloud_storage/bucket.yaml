@@ -1,0 +1,52 @@
+search:
+  fields:
+    - ID: data.id
+    - Name: data.name
+    - Location: data.location.location
+    - Object Counts: data.objectCount
+    - Object Total Size (Bytes): data.objectTotalSize
+    - Creation Time: data.creationTimestamp
+    - Update Time: data.updateTimestamp
+
+table:
+  sort:
+    key: data.id
+    desc: true
+  fields:
+    - Location Type: data.location.locationType
+    - Location: data.location.locationDisplay
+    - Default Storage Class: data.defaultStorageClass
+    - Public Access: data.publicAccess
+    - Object Total Counts: data.objectCount
+    - Access Control: data.accessControl
+    - Lifecycle rules: data.lifecycleRule.lifecycleRuleDisplay
+    - Requester Pays: data.requesterPays
+    - Retention Policy: data.retentionPolicyDisplay
+    - Encryption: data.encryption
+    - Creation Time: data.creationTimestamp
+    - Link URL: data.links.linkUrl
+    - Link for gsutil: data.links.gsutilLink
+    - Retention Period: data.retentionPolicyDisplay
+
+tabs.0:
+  name: Details
+  items:
+    - name: Schema
+      type: item
+      fields:
+        - Schema ID: data.id
+        - Schema type: data.schemaType
+          type: enum
+          enums:
+            - AVRO: red.500
+            - PROTOCOL_BUFFER: blue.500
+            - TYPE_UNSPECIFIED: yellow.500
+        - Project: data.project
+    - name: Definition
+      type: item
+      fields:
+        - Definition: data.display.outputDisplay
+          type: more
+          popup_key: data.definition
+          popup_name: Definition
+          popup_type: raw
