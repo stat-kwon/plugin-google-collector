@@ -21,14 +21,23 @@ table:
       type: enum
       enums:
         - ACTIVE: green.500
+          type: state
         - DELETING: yellow.500
+          type: state
         - DEPLOY_IN_PROGRESS: yellow.500
+          type: state
         - DELETE_IN_PROGRESS: yellow.500
+          type: state
         - STATE_UNSPECIFIED: red.500
+          type: state
         - FAILED: red.500
+          type: state
         - UNKNOWN: red.500
+          type: state
         - CLOUD_FUNCTION_STATUS_UNSPECIFIED: red.500
+          type: state
         - OFFLINE: red.500
+          type: state
     - Environment: data.display.environment
     - ID: data.display.functionId
     - Last deployed: data.display.lastDeployed

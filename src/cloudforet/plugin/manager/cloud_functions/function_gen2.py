@@ -72,7 +72,7 @@ class FunctionGen2Manager(ResourceManager):
                 "state": function.get("state"),
                 "region": location,
                 "environment": self._make_readable_environment(function["environment"]),
-                "function_id": function_id,
+                "functionId": function_id,
                 "lastDeployed": self._make_last_deployed(function["updateTime"]),
                 "runtime": self._make_runtime_for_readable(
                     function["buildConfig"]["runtime"]

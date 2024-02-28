@@ -61,7 +61,7 @@ class FunctionGen1Manager(ResourceManager):
                 "state": function.get("status"),
                 "region": location,
                 "environment": "1st gen",
-                "function_id": function_id,
+                "functionId": function_id,
                 "lastDeployed": self._make_last_deployed(function["updateTime"]),
                 "runtime": self._make_runtime_for_readable(function["runtime"]),
                 "timeout": self._make_timeout(function["timeout"]),
@@ -127,6 +127,7 @@ class FunctionGen1Manager(ResourceManager):
                     )
                 }
             )
+            print(function)
 
             yield make_cloud_service(
                 name=function_name,
