@@ -20,7 +20,8 @@ table:
     - Status: data.display.state
       type: enum
       enums:
-        - ACTIVE: green.500
+        - ACTIVE:
+          icon_color: green.500
           type: state
         - DELETING: yellow.500
           type: state
@@ -157,5 +158,5 @@ tabs.4:
         - Remote Ip Prefix: remote_ip_prefix
         - Description: description
       popup_name: Rules
-      popup_key: data.display.security_groups_list.security_group_rules
+      popup_key: security_group_rules
       popup_type: simple-table
