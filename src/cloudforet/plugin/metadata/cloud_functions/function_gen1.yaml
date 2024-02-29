@@ -20,9 +20,8 @@ table:
     - Status: data.display.state
       type: enum
       enums:
-        - ACTIVE:
+        - ACTIVE: green.500
           type: state
-          icon_color: green.500
         - DELETING: yellow.500
           type: state
         - DEPLOY_IN_PROGRESS: yellow.500
