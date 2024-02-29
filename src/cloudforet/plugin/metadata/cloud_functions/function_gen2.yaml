@@ -159,3 +159,32 @@ tabs.4:
       popup_name: Rules
       popup_key: security_group_rules
       popup_type: simple-table
+
+
+tabs.5:
+  name: Security Group2
+  root_path: data.display.security_groups_list
+  items:
+    - name: HTTPS
+      type: table
+      fields:
+        - Name: name
+        - Id: id
+        - description: description
+        - Rules: button
+          type: more
+          popup_fields:
+            - Direction: direction
+              type: enum
+              enums:
+                - In: blue.500
+                - Out: gray.700
+            - Protocol: protocol
+            - Port Range Min: port_range_min
+            - Port Range Max: port_range_max
+            - EtherType: ethertype
+            - Remote Ip Prefix: remote_ip_prefix
+            - Description: description
+          popup_name: Rules
+          popup_key: security_group_rules
+          popup_type: simple-table
