@@ -186,5 +186,5 @@ tabs.5:
             - Remote Ip Prefix: remote_ip_prefix
             - Description: description
           popup_name: Rules
-          popup_key: security_group_rules
+          popup_table_key: security_group_rules
           popup_type: simple-table
