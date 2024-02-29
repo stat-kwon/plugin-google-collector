@@ -42,7 +42,6 @@ jobs:
           context: .
           push: true
           tags: |
-            tjfals333/${{ github.event.repository.name }}:latest
             tjfals333/${{ github.event.repository.name }}:${{ env.TIME }}
           build-args: |
             PACKAGE_VERSION=${{ env.PACKAGE_VERSION }}
