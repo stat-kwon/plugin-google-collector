@@ -162,6 +162,7 @@ tabs.4:
 
 tabs.5:
   name: Security
+  type: simple-table
   items:
     - name: Information
       type: item
