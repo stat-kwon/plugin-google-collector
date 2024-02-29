@@ -151,7 +151,35 @@ tabs.4:
         - Port Range Max: port_range_max
         - EtherType: ethertype
         - Remote Ip Prefix: remote_ip_prefix
-        - Description: description
       popup_name: Rules
       popup_table_key: security_group_rules
       popup_type: simple-table
+
+
+tabs.5:
+  name: Security
+  type: simple-table
+  items:
+    - name: Information
+      type: item
+      root_path: data.display.security_groups_list
+      fields:
+        - Name: name
+        - Id: id
+        - description: description
+        - Rules: button
+          type: more
+          popup_fields:
+            - Direction: direction
+              type: enum
+              enums:
+                - In: blue.500
+                - Out: gray.700
+            - Protocol: protocol
+            - Port Range Min: port_range_min
+            - Port Range Max: port_range_max
+            - EtherType: ethertype
+            - Remote Ip Prefix: remote_ip_prefix
+          popup_name: Rules
+          popup_table_key: security_group_rules
+          popup_type: simple-table
