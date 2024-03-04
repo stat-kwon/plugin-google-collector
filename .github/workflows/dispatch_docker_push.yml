@@ -1,7 +1,9 @@
 name: "[Dispath] Docker push"
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - master
 
 env:
   BRANCH_NAME: master
