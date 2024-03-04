@@ -127,69 +127,6 @@ class FunctionGen1Manager(ResourceManager):
                     )
                 }
             )
-            function["display"].update(
-                {
-                    "security_groups_list": [
-                        {
-                            "name": "default",
-                            "description": "Default security group",
-                            "button": "show rules",
-                            "security_group_rules": [
-                                {
-                                    "remote_ip_prefix": "0.0.0.0/0",
-                                    "ethertype": "IPv4",
-                                    "protocol": "Option",
-                                    "port_range_min": "-",
-                                    "remote_group_id": "77c38eb3-9eef-4ce4-944c-4af034c001c9",
-                                    "description": None,
-                                    "port_range_max": "-",
-                                    "direction": "In",
-                                },
-                                {
-                                    "remote_group_id": "-",
-                                    "ethertype": "IPv6",
-                                    "protocol": "Option",
-                                    "direction": "Out",
-                                    "port_range_max": "-",
-                                    "remote_ip_prefix": "::/0",
-                                    "description": None,
-                                    "port_range_min": "-",
-                                },
-                                {
-                                    "remote_group_id": "-",
-                                    "protocol": "tcp",
-                                    "direction": "In",
-                                    "ethertype": "IPv4",
-                                    "port_range_min": "22",
-                                    "description": "",
-                                    "port_range_max": "22",
-                                    "remote_ip_prefix": "106.247.225.50/32",
-                                },
-                                {
-                                    "description": None,
-                                    "remote_ip_prefix": "::/0",
-                                    "direction": "In",
-                                    "ethertype": "IPv6",
-                                    "port_range_min": "-",
-                                    "port_range_max": "-",
-                                    "protocol": "Option",
-                                    "remote_group_id": "77c38eb3-9eef-4ce4-944c-4af034c001c9",
-                                },
-                                {
-                                    "port_range_max": "-",
-                                    "direction": "Out",
-                                    "remote_group_id": "-",
-                                    "description": None,
-                                    "remote_ip_prefix": "0.0.0.0/0",
-                                    "port_range_min": "-",
-                                    "protocol": "Option",
-                                    "ethertype": "IPv4",
-                                },
-                            ],
-                        }
-                    ]
-                }
-            )
 
             yield make_cloud_service(
                 name=function_name,
