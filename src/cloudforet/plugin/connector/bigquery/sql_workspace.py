@@ -34,22 +34,6 @@ class SQLWorkspaceConnector(GoogleCloudConnector):
 
         return response
 
-    def list_job(self, **query):
-        job_list = []
-        query.update(
-            {"projectId": self.project_id, "allUsers": True, "projection": "full"}
-        )
-        request = self.client.jobs().list(**query)
-        while request is not None:
-            response = request.execute()
-            for job in response.get("jobs", []):
-                job_list.append(job)
-            request = self.client.jobs().list_next(
-                previous_request=request, previous_response=response
-            )
-
-        return job_list
-
     def list_projects(self, **query):
         project_list = []
         request = self.client.projects().list(**query)
@@ -79,12 +63,3 @@ class SQLWorkspaceConnector(GoogleCloudConnector):
             )
 
         return table_list
-
-    def get_tables(self, dataset_id, table_id, **query):
-        query.update(
-            {"projectId": self.project_id, "datasetId": dataset_id, "tableId": table_id}
-        )
-        response = {}
-        response = self.client.tables().get(**query).execute()
-
-        return response

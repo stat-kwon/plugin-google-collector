@@ -1,4 +1,5 @@
 import logging
+import time
 
 from spaceone.inventory.plugin.collector.lib.server import CollectorPluginServer
 
@@ -33,6 +34,7 @@ def collector_collect(params: dict) -> dict:
                 for result in results:
                     yield result
     else:
+        start_time = time.time()
         _LOGGER.debug(
             f"[START] Start collecting all cloud resources (project_id: {secret_data.get('project_id')})"
         )
@@ -43,7 +45,7 @@ def collector_collect(params: dict) -> dict:
             for result in results:
                 yield result
         _LOGGER.debug(
-            f"[DONE] All Cloud Resources Collected (project_id: {secret_data.get('project_id')})"
+            f"[DONE] All Cloud Resources Collected Time: {time.time() - start_time:.2f}s (project_id: {secret_data.get('project_id')})"
         )
 
 

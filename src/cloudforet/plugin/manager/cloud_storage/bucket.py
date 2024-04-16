@@ -9,7 +9,7 @@ from cloudforet.plugin.connector.cloud_storage import (
 )
 from cloudforet.plugin.manager import ResourceManager
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("spaceone")
 
 
 class BucketManager(ResourceManager):
@@ -51,67 +51,85 @@ class BucketManager(ResourceManager):
             schema=schema,
         )
 
+        cloud_services = []
+        error_responses = []
         for bucket in storage_conn.list_buckets():
-            bucket_name = bucket.get("name", "")
-            bucket_id = bucket.get("id")
+            try:
+                bucket_name = bucket.get("name", "")
+                bucket_id = bucket.get("id")
 
-            object_count = self._get_object_total_count(monitoring_conn, bucket_name)
-            object_size = self._get_bucket_total_size(monitoring_conn, bucket_name)
-            iam_policy = storage_conn.list_iam_policy(bucket_name)
-            st_class = bucket.get("storageClass").lower()
-            region = self.get_matching_region(bucket)
-            labels = self.convert_labels_format(bucket.get("labels", {}))
+                object_count = self._get_object_total_count(
+                    monitoring_conn, bucket_name
+                )
+                object_size = self._get_bucket_total_size(monitoring_conn, bucket_name)
+                iam_policy = storage_conn.list_iam_policy(bucket_name)
+                st_class = bucket.get("storageClass").lower()
+                region = self.get_matching_region(bucket)
+                labels = self.convert_labels_format(bucket.get("labels", {}))
 
-            bucket.update(
-                {
-                    "project": project_id,
-                    "encryption": self._get_encryption(bucket),
-                    "requesterPays": self._get_requester_pays(bucket),
-                    "retentionPolicyDisplay": self._get_retention_policy_display(
-                        bucket
-                    ),
-                    "links": self._get_config_link(bucket),
-                    "size": object_size,
-                    "defaultEventBasedHold": "Enabled"
-                    if bucket.get("defaultEventBasedHold")
-                    else "Disabled",
-                    "iamPolicy": iam_policy,
-                    "iamPolicyBinding": self._get_iam_policy_binding(iam_policy),
-                    "objectCount": object_count,
-                    "objectTotalSize": object_size,
-                    "lifecycleRule": self._get_lifecycle_rule(bucket),
-                    "location": self.get_location(bucket),
-                    "defaultStorageClass": st_class.capitalize(),
-                    "accessControl": self._get_access_control(bucket),
-                    "publicAccess": self._get_public_access(bucket, iam_policy),
-                    "labels": labels,
-                }
-            )
+                bucket.update(
+                    {
+                        "project": project_id,
+                        "encryption": self._get_encryption(bucket),
+                        "requesterPays": self._get_requester_pays(bucket),
+                        "retentionPolicyDisplay": self._get_retention_policy_display(
+                            bucket
+                        ),
+                        "links": self._get_config_link(bucket),
+                        "size": object_size,
+                        "defaultEventBasedHold": "Enabled"
+                        if bucket.get("defaultEventBasedHold")
+                        else "Disabled",
+                        "iamPolicy": iam_policy,
+                        "iamPolicyBinding": self._get_iam_policy_binding(iam_policy),
+                        "objectCount": object_count,
+                        "objectTotalSize": object_size,
+                        "lifecycleRule": self._get_lifecycle_rule(bucket),
+                        "location": self.get_location(bucket),
+                        "defaultStorageClass": st_class.capitalize(),
+                        "accessControl": self._get_access_control(bucket),
+                        "publicAccess": self._get_public_access(bucket, iam_policy),
+                        "labels": labels,
+                    }
+                )
 
-            bucket.update(
-                {
-                    "google_cloud_logging": self.set_google_cloud_logging(
-                        "CloudStorage", "Bucket", project_id, bucket_name
-                    ),
-                }
-            )
-            region_code = region.get("region_code")
-            self.set_region_code(region_code)
-            yield make_cloud_service(
-                name=bucket_name,
-                cloud_service_type=self.cloud_service_type,
-                cloud_service_group=self.cloud_service_group,
-                provider=self.provider,
-                account=project_id,
-                instance_type="",
-                instance_size=bucket.get("size"),
-                data=bucket,
-                region_code=region_code,
-                reference={
-                    "resource_id": bucket_id,
-                    "external_link": f"https://console.cloud.google.com/storage/browser/{bucket_name}",
-                },
-            )
+                bucket.update(
+                    {
+                        "google_cloud_logging": self.set_google_cloud_logging(
+                            "CloudStorage", "Bucket", project_id, bucket_name
+                        ),
+                    }
+                )
+                region_code = region.get("region_code")
+                self.set_region_code(region_code)
+                cloud_services.append(
+                    make_cloud_service(
+                        name=bucket_name,
+                        cloud_service_type=self.cloud_service_type,
+                        cloud_service_group=self.cloud_service_group,
+                        provider=self.provider,
+                        account=project_id,
+                        instance_type="",
+                        instance_size=bucket.get("size"),
+                        data=bucket,
+                        region_code=region_code,
+                        reference={
+                            "resource_id": bucket_id,
+                            "external_link": f"https://console.cloud.google.com/storage/browser/{bucket_name}",
+                        },
+                    )
+                )
+            except Exception as e:
+                _LOGGER.error(f"Error on Bucket {bucket.get('name')}: {e}")
+                error_responses.append(
+                    make_error_response(
+                        error=e,
+                        provider=self.provider,
+                        cloud_service_group=self.cloud_service_group,
+                        cloud_service_type=self.cloud_service_type,
+                    )
+                )
+        return cloud_services, error_responses
 
     @staticmethod
     def _get_object_total_count(monitoring_conn, bucket_name):

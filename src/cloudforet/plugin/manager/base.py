@@ -66,7 +66,7 @@ class ResourceManager(BaseManager):
             )
 
         _LOGGER.debug(
-            f"[DONE] {self.__repr__()} Collected {time.time() - start_time:.2f}s (Total Count: {success_count + error_count}, Success: {success_count}, Failure: {error_count})"
+            f"[DONE] {self.__repr__()} Collected Time: {time.time() - start_time:.2f}s, Total Count: {success_count + error_count} (Success: {success_count}, Failure: {error_count})"
         )
 
     def collect_cloud_service_type(self):
