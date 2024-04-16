@@ -8,7 +8,7 @@ from cloudforet.plugin.config.global_conf import (
     REGION_INFO,
 )
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("spaceone")
 
 __all__ = ["ResourceManager"]
 
@@ -24,6 +24,9 @@ class ResourceManager(BaseManager):
         self.cloud_service_group = ""
         self.cloud_service_type = ""
 
+    def __repr__(self):
+        return f"{self.__class__.__name__}({self.cloud_service_group}, {self.cloud_service_type})"
+
     @classmethod
     def list_managers(cls):
         return cls.__subclasses__()
@@ -35,12 +38,18 @@ class ResourceManager(BaseManager):
                 yield manager
 
     def collect_resources(self, options, secret_data, schema):
-        _LOGGER.debug(
-            f"[collect_resources] collect Field resources (options: {options})"
-        )
+        _LOGGER.debug(f"[START] Collect {self.__repr__()} (options: {options})")
+        success_count, error_count = [0, 0]
         try:
             yield from self.collect_cloud_service_type()
-            yield from self.collect_cloud_service(options, secret_data, schema)
+
+            cloud_services, total_count = self.collect_cloud_service(
+                options, secret_data, schema
+            )
+            for cloud_service in cloud_services:
+                yield cloud_service
+            success_count, error_count = total_count
+
             yield from self.collect_region()
 
         except Exception as e:
@@ -51,6 +60,10 @@ class ResourceManager(BaseManager):
                 cloud_service_type=self.cloud_service_type,
             )
 
+        _LOGGER.debug(
+            f"[DONE] Collect {self.__repr__()} (Success: {success_count}, Failure: {error_count})"
+        )
+
     def collect_cloud_service_type(self):
         cloud_service_type = self.create_cloud_service_type()
         yield make_response(
@@ -60,19 +73,27 @@ class ResourceManager(BaseManager):
         )
 
     def collect_cloud_service(self, options, secret_data, schema):
-        cloud_services = self.create_cloud_service(options, secret_data, schema)
+        total_resources = []
+        cloud_services, error_resources = self.create_cloud_service(
+            options, secret_data, schema
+        )
         for cloud_service in cloud_services:
-            yield make_response(
-                cloud_service=cloud_service,
-                match_keys=[
-                    [
-                        "reference.resource_id",
-                        "provider",
-                        "cloud_service_type",
-                        "cloud_service_group",
-                    ]
-                ],
+            total_resources.append(
+                make_response(
+                    cloud_service=cloud_service,
+                    match_keys=[
+                        [
+                            "reference.resource_id",
+                            "provider",
+                            "cloud_service_type",
+                            "cloud_service_group",
+                        ]
+                    ],
+                )
             )
+        total_resources.extend(error_resources)
+        total_count = [len(cloud_services), len(error_resources)]
+        return total_resources, total_count
 
     def collect_region(self):
         for region_code in self.collected_region_codes:
