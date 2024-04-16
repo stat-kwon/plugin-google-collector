@@ -38,7 +38,10 @@ class ResourceManager(BaseManager):
                 yield manager
 
     def collect_resources(self, options, secret_data, schema):
-        _LOGGER.debug(f"[START] Collect {self.__repr__()} (options: {options})")
+        project_id = secret_data.get("project_id")
+        _LOGGER.debug(
+            f"[START] Collecting {self.__repr__()} (project_id: {project_id})"
+        )
         success_count, error_count = [0, 0]
         try:
             yield from self.collect_cloud_service_type()
@@ -61,7 +64,7 @@ class ResourceManager(BaseManager):
             )
 
         _LOGGER.debug(
-            f"[DONE] Collect {self.__repr__()} (Success: {success_count}, Failure: {error_count})"
+            f"[DONE] {self.__repr__()} Collected (Total Count: {success_count + error_count}, Success: {success_count}, Failure: {error_count})"
         )
 
     def collect_cloud_service_type(self):

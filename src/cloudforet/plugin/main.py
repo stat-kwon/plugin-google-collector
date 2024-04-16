@@ -6,7 +6,7 @@ from cloudforet.plugin.manager import ResourceManager
 
 app = CollectorPluginServer()
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("spaceone")
 
 
 @app.route("Collector.init")
@@ -33,12 +33,18 @@ def collector_collect(params: dict) -> dict:
                 for result in results:
                     yield result
     else:
+        _LOGGER.debug(
+            f"[START] Start collecting all cloud resources (project_id: {secret_data.get('project_id')})"
+        )
         resource_mgrs = ResourceManager.list_managers()
         for manager in resource_mgrs:
             results = manager().collect_resources(options, secret_data, schema)
 
             for result in results:
                 yield result
+        _LOGGER.debug(
+            f"[DONE] All Cloud Resources Collected (project_id: {secret_data.get('project_id')})"
+        )
 
 
 @app.route("Job.get_tasks")
