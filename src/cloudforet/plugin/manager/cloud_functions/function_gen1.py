@@ -1,11 +1,5 @@
 import logging
 from datetime import datetime, timedelta
-import google.oauth2.service_account
-from google.cloud import storage
-from google.api_core.exceptions import NotFound
-from zipfile import ZipFile
-from zipfile import is_zipfile
-import io
 
 from spaceone.inventory.plugin.collector.lib import *
 from cloudforet.plugin.manager import ResourceManager
@@ -49,101 +43,105 @@ class FunctionGen1Manager(ResourceManager):
             options=options, secret_data=secret_data, schema=schema
         )
 
+        cloud_services = []
+        error_responses = []
         for function in function_conn.list_functions():
-            function_name = function.get("name")
-            location, function_id = self._make_location_and_id(
-                function_name, project_id
-            )
-            self.set_region_code(location)
-            labels = function.get("labels")
-
-            display = {
-                "state": function.get("status"),
-                "region": location,
-                "environment": "1st gen",
-                "functionId": function_id,
-                "lastDeployed": self._make_last_deployed(function["updateTime"]),
-                "runtime": self._make_runtime_for_readable(function["runtime"]),
-                "timeout": self._make_timeout(function["timeout"]),
-                "executedFunction": function.get("entryPoint"),
-                "memoryAllocated": self._make_memory_allocated(
-                    function["availableMemoryMb"]
-                ),
-                "ingressSettings": self._make_ingress_setting_readable(
-                    function["ingressSettings"]
-                ),
-                "vpcConnectorEgressSettings": self._make_vpc_egress_readable(
-                    function.get("vpcConnectorEgressSettings")
-                ),
-            }
-
-            if http_trigger := function.get("httpsTrigger"):
-                display.update({"trigger": "HTTP", "httpUrl": http_trigger["url"]})
-
-            if event_trigger := function.get("eventTrigger"):
-                trigger = self._get_display_name(event_trigger.get("service"))
-                display.update({"trigger": trigger, "eventProvider": trigger})
-
-            if function.get("sourceUploadUrl"):
-                bucket = self._make_bucket_from_build_name(function.get("buildName"))
-
-                try:
-                    source_location, source_code = self._get_source_location_and_code(
-                        bucket, function_id, secret_data
-                    )
-
-                    display.update(
-                        {"sourceLocation": source_location, "sourceCode": source_code}
-                    )
-                except NotFound:
-                    _LOGGER.debug(
-                        f"[collect_cloud_service] => {bucket} not found in bucket of GCS (function_id: {function_id})"
-                    )
-                    pass
-
-            if runtime_environment_variables := function.get("environmentVariables"):
-                display.update(
-                    {
-                        "runtimeEnvironmentVariables": self._dict_to_list_of_dict(
-                            runtime_environment_variables
-                        )
-                    }
+            try:
+                function_name = function.get("name")
+                location, function_id = self._make_location_and_id(
+                    function_name, project_id
                 )
-            if build_environment_variables := function.get("buildEnvironmentVariables"):
-                display.update(
-                    {
-                        "buildEnvironmentVariables": self._dict_to_list_of_dict(
-                            build_environment_variables
-                        )
-                    }
-                )
+                self.set_region_code(location)
+                labels = function.get("labels")
 
-            function.update({"project": project_id, "display": display})
-
-            function.update(
-                {
-                    "google_cloud_logging": self.set_google_cloud_logging(
-                        "CloudFunctions", "Function", project_id, function_id
-                    )
+                display = {
+                    "state": function.get("status"),
+                    "region": location,
+                    "environment": "1st gen",
+                    "functionId": function_id,
+                    "lastDeployed": self._make_last_deployed(function["updateTime"]),
+                    "runtime": self._make_runtime_for_readable(function["runtime"]),
+                    "timeout": self._make_timeout(function["timeout"]),
+                    "executedFunction": function.get("entryPoint"),
+                    "memoryAllocated": self._make_memory_allocated(
+                        function["availableMemoryMb"]
+                    ),
+                    "ingressSettings": self._make_ingress_setting_readable(
+                        function["ingressSettings"]
+                    ),
+                    "vpcConnectorEgressSettings": self._make_vpc_egress_readable(
+                        function.get("vpcConnectorEgressSettings")
+                    ),
                 }
-            )
 
-            yield make_cloud_service(
-                name=function_name,
-                cloud_service_type=self.cloud_service_type,
-                cloud_service_group=self.cloud_service_group,
-                provider=self.provider,
-                account=project_id,
-                data=function,
-                region_code=location,
-                instance_type="",
-                instance_size=0,
-                reference={
-                    "resource_id": function_name,
-                    "external_link": f"https://console.cloud.google.com/functions/details/{location}/{function_id}?env=gen1&project={project_id}",
-                },
-                tags=labels,
-            )
+                if http_trigger := function.get("httpsTrigger"):
+                    display.update({"trigger": "HTTP", "httpUrl": http_trigger["url"]})
+
+                if event_trigger := function.get("eventTrigger"):
+                    trigger = self._get_display_name(event_trigger.get("service"))
+                    display.update({"trigger": trigger, "eventProvider": trigger})
+
+                if runtime_environment_variables := function.get(
+                    "environmentVariables"
+                ):
+                    display.update(
+                        {
+                            "runtimeEnvironmentVariables": self._dict_to_list_of_dict(
+                                runtime_environment_variables
+                            )
+                        }
+                    )
+                if build_environment_variables := function.get(
+                    "buildEnvironmentVariables"
+                ):
+                    display.update(
+                        {
+                            "buildEnvironmentVariables": self._dict_to_list_of_dict(
+                                build_environment_variables
+                            )
+                        }
+                    )
+
+                function.update({"project": project_id, "display": display})
+
+                function.update(
+                    {
+                        "google_cloud_logging": self.set_google_cloud_logging(
+                            "CloudFunctions", "Function", project_id, function_id
+                        )
+                    }
+                )
+
+                cloud_services.append(
+                    make_cloud_service(
+                        name=function_name,
+                        cloud_service_type=self.cloud_service_type,
+                        cloud_service_group=self.cloud_service_group,
+                        provider=self.provider,
+                        account=project_id,
+                        data=function,
+                        region_code=location,
+                        instance_type="",
+                        instance_size=0,
+                        reference={
+                            "resource_id": function_name,
+                            "external_link": f"https://console.cloud.google.com/functions/details/{location}/{function_id}?env=gen1&project={project_id}",
+                        },
+                        tags=labels,
+                    )
+                )
+            except Exception as e:
+                _LOGGER.error(f"Error on Function {function.get('name')}: {e}")
+
+                error_responses.append(
+                    make_error_response(
+                        error=e,
+                        provider=self.provider,
+                        cloud_service_group=self.cloud_service_group,
+                        cloud_service_type=self.cloud_service_type,
+                    )
+                )
+        return cloud_services, error_responses
 
     @staticmethod
     def _make_location_and_id(function_name, project_id):
@@ -231,52 +229,6 @@ class FunctionGen1Manager(ResourceManager):
             "analytics": "Google Analytics for Firebase",
         }
         return service_map[service]
-
-    @staticmethod
-    def _make_bucket_from_build_name(build_name):
-        items = list(build_name.split("/"))
-        bucket_project = items[1]
-        bucket_region = items[3]
-        return f"gcf-sources-{bucket_project}-{bucket_region}"
-
-    @staticmethod
-    def _get_source_location_and_code(bucket_name, function_id, secret_data):
-        credentials = (
-            google.oauth2.service_account.Credentials.from_service_account_info(
-                secret_data
-            )
-        )
-        storage_client = storage.Client(
-            project=secret_data["project_id"], credentials=credentials
-        )
-
-        bucket = storage_client.get_bucket(bucket_name)
-        blob_names = [blob.name for blob in bucket.list_blobs()]
-
-        location = ""
-        blob = None
-        for blob_name in blob_names:
-            if function_id == blob_name[: len(function_id)]:
-                blob = bucket.blob(blob_name)
-                location = f"{bucket_name}/{blob_name}"
-        if blob:
-            zip_file_from_storage = io.BytesIO(blob.download_as_string())
-
-            code_data = []
-            if is_zipfile(zip_file_from_storage):
-                with ZipFile(zip_file_from_storage, "r") as file:
-                    for content_file_name in file.namelist():
-                        content = file.read(content_file_name)
-                        code_data.append(
-                            {
-                                "fileName": content_file_name,
-                                "content": content.decode("utf-8"),
-                                "outputDisplay": "show",
-                            }
-                        )
-            return location, code_data
-        else:
-            return "", {}
 
     @staticmethod
     def _dict_to_list_of_dict(dict_variables: dict) -> list:

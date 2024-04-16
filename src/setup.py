@@ -32,10 +32,8 @@ setup(
     packages=find_packages(),
     install_requires=[
         "spaceone-api",
-        "schematics",
         "google-api-python-client",
         "MarkupSafe>=2.0.0rc2",
-        "google-cloud-storage",
         "requests",
         "beautifulsoup4",
     ],

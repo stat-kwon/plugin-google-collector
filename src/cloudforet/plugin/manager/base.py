@@ -1,5 +1,6 @@
 import abc
 import logging
+import time
 from spaceone.core.manager import BaseManager
 from spaceone.inventory.plugin.collector.lib import *
 
@@ -39,6 +40,7 @@ class ResourceManager(BaseManager):
 
     def collect_resources(self, options, secret_data, schema):
         project_id = secret_data.get("project_id")
+        start_time = time.time()
         _LOGGER.debug(
             f"[START] Collecting {self.__repr__()} (project_id: {project_id})"
         )
@@ -64,7 +66,7 @@ class ResourceManager(BaseManager):
             )
 
         _LOGGER.debug(
-            f"[DONE] {self.__repr__()} Collected (Total Count: {success_count + error_count}, Success: {success_count}, Failure: {error_count})"
+            f"[DONE] {self.__repr__()} Collected {time.time() - start_time:.2f}s (Total Count: {success_count + error_count}, Success: {success_count}, Failure: {error_count})"
         )
 
     def collect_cloud_service_type(self):
