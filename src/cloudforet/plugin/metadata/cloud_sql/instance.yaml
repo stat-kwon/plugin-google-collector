@@ -22,7 +22,7 @@ table:
         - STOPPED: red.500
     - Type: data.databaseVersion
     - Project: data.project
-    - Public IP Address: data.ipAddresses # TODO: need to check list field
+    - Public IP Address: data.ipAddresses
     - Location: data.gce_zone
     - Data Disk Size (GB): data.settings.dataDiskSizeGb
     - Connection name: data.connectionName
@@ -60,8 +60,8 @@ tabs.1:
         - Auto Storage Increased: data.settings.storageAutoResize
           type: enum
           enums:
-            - true: indigo.500
-            - false: coral.500
+            - "true": indigo.500
+            - "false": coral.500
         - Auto Storage Increased Limit Size (GB): data.settings.storageAutoResizeLimit
         - Point-in-time recovery: data.settings.storageAutoResize
         - Availability Type: data.settings.availabilityType
@@ -103,15 +103,14 @@ tabs.4:
     - name: User
       type: item
       fields:
-        fields:
-          - User Name: data.users.name
-          - State: data.users.sqlServerUserDetails.disabled
-            type: enum
-            enums:
-              - true: indigo.500
-              - false: coral.500
-          - Host: data.users.host
-          - Server Roles: data.users.sqlServerUserDetails.serverRoles
+        - User Name: data.users.name
+        - State: data.users.sqlServerUserDetails.disabled
+          type: enum
+          enums:
+            - "true": indigo.500
+            - "false": coral.500
+        - Host: data.users.host
+        - Server Roles: data.users.sqlServerUserDetails.serverRoles
 
 tabs.5:
   name: Backup
@@ -122,26 +121,22 @@ tabs.5:
         - Enabled: data.settings.backupConfiguration.enabled
           type: enum
           enums:
-            - true: indigo.500
-            - false: coral.500
+            - "true": indigo.500
+            - "false": coral.500
         - Location: data.settings.backupConfiguration.location
         - Start Time: data.settings.backupConfiguration.startTime
         - Binary Log Enabled: data.settings.backupConfiguration.binaryLogEnabled
           type: enum
           enums:
-            - true: indigo.500
-            - false: coral.500
+            - "true": indigo.500
+            - "false": coral.500
         - Replication Log Archiving Enabled: data.settings.backupConfiguration.replicationLogArchivingEnabled
           type: enum
           enums:
-            - true: indigo.500
-            - false: coral.500
+            - "true": indigo.500
+            - "false": coral.500
         - Point In Time Recovery Enabled: data.settings.backupConfiguration.pointInTimeRecoveryEnabled
           type: enum
           enums:
-            - true: indigo.500
-            - false: coral.500
-
-
-
-
+            - "true": indigo.500
+            - "false": coral.500

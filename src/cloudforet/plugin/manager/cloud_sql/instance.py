@@ -5,7 +5,7 @@ from cloudforet.plugin.config.global_conf import ASSET_URL
 from cloudforet.plugin.connector.cloud_sql.instance import CloudSQLInstanceConnector
 from cloudforet.plugin.manager import ResourceManager
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("spaceone")
 
 
 class CloudSQLManager(ResourceManager):
@@ -36,59 +36,82 @@ class CloudSQLManager(ResourceManager):
         cloud_sql_conn = CloudSQLInstanceConnector(
             options=options, secret_data=secret_data, schema=schema
         )
+
+        cloud_services = []
+        error_responses = []
         for instance in cloud_sql_conn.list_instances():
-            instance_name = instance["name"]
-            region = instance["region"]
+            try:
+                instance_name = instance["name"]
+                region = instance["region"]
 
-            if self._check_sql_instance_is_available(instance):
-                databases = cloud_sql_conn.list_databases(instance_name)
-                users = cloud_sql_conn.list_users(instance_name)
-            else:
-                databases = []
-                users = []
+                if self._check_sql_instance_is_available(instance):
+                    databases = cloud_sql_conn.list_databases(instance_name)
+                    users = cloud_sql_conn.list_users(instance_name)
+                else:
+                    databases = []
+                    users = []
 
-            monitoring_resource_id = f"{project_id}:{instance_name}"
-            instance.update(
-                {
-                    "google_cloud_monitoring": self.set_google_cloud_monitoring(
-                        project_id,
-                        "cloudsql.googleapis.com/database",
-                        monitoring_resource_id,
-                        [
-                            {
-                                "key": "resource.labels.database_id",
-                                "value": monitoring_resource_id,
-                            }
-                        ],
-                    ),
-                    "displayState": self._get_display_state(instance),
-                    "databases": [database for database in databases],
-                    "users": [user for user in users],
-                }
-            )
+                monitoring_resource_id = f"{project_id}:{instance_name}"
+                instance.update(
+                    {
+                        "google_cloud_monitoring": self.set_google_cloud_monitoring(
+                            project_id,
+                            "cloudsql.googleapis.com/database",
+                            monitoring_resource_id,
+                            [
+                                {
+                                    "key": "resource.labels.database_id",
+                                    "value": monitoring_resource_id,
+                                }
+                            ],
+                        ),
+                        "displayState": self._get_display_state(instance),
+                        "databases": [database for database in databases],
+                        "users": [user for user in users],
+                    }
+                )
 
-            instance.update(
-                {
-                    "google_cloud_logging": self.set_google_cloud_logging(
-                        "CloudSQL", "Instance", project_id, monitoring_resource_id
+                instance.update(
+                    {
+                        "google_cloud_logging": self.set_google_cloud_logging(
+                            "CloudSQL", "Instance", project_id, monitoring_resource_id
+                        )
+                    }
+                )
+
+                self.set_region_code(region)
+
+                cloud_services.append(
+                    make_cloud_service(
+                        name=instance_name,
+                        cloud_service_type=self.cloud_service_type,
+                        cloud_service_group=self.cloud_service_group,
+                        provider=self.provider,
+                        account=project_id,
+                        data=instance,
+                        region_code=region,
+                        reference={
+                            "resource_id": instance_name,
+                            "external_link": f"https://console.cloud.google.com/sql/instances/{instance_name}/overview?authuser=1&project={project_id}",
+                        },
                     )
-                }
-            )
+                )
 
-            self.set_region_code(region)
-            yield make_cloud_service(
-                name=instance_name,
-                cloud_service_type=self.cloud_service_type,
-                cloud_service_group=self.cloud_service_group,
-                provider=self.provider,
-                account=project_id,
-                data=instance,
-                region_code=region,
-                reference={
-                    "resource_id": instance_name,
-                    "external_link": f"https://console.cloud.google.com/sql/instances/{instance_name}/overview?authuser=1&project={project_id}",
-                },
-            )
+            except Exception as e:
+                _LOGGER.error(
+                    f"Error on Instance of Cloud SQL {instance.get('name')}: {e}"
+                )
+
+                error_responses.append(
+                    make_error_response(
+                        error=e,
+                        provider=self.provider,
+                        cloud_service_group=self.cloud_service_group,
+                        cloud_service_type=self.cloud_service_type,
+                    )
+                )
+
+        return cloud_services, error_responses
 
     def _check_sql_instance_is_available(self, instance):
         power_state = self._get_display_state(instance)
