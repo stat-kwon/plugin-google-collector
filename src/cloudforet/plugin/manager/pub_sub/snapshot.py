@@ -5,7 +5,7 @@ from cloudforet.plugin.config.global_conf import ASSET_URL
 from cloudforet.plugin.connector.pub_sub.snapshot import SnapshotConnector
 from cloudforet.plugin.manager import ResourceManager
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("spaceone")
 
 
 class SnapshotManager(ResourceManager):
@@ -37,35 +37,53 @@ class SnapshotManager(ResourceManager):
             options=options, secret_data=secret_data, schema=schema
         )
 
+        cloud_services = []
+        error_responses = []
         for snapshot in snapshot_connector.list_snapshots():
-            snapshot_name = snapshot.get("name")
-            snapshot_id = self._make_snapshot_id(snapshot_name, project_id)
-            snapshot.update(
-                {
-                    "id": snapshot_id,
-                    "project": project_id,
-                    "google_cloud_logging": self.set_google_cloud_logging(
-                        "Pub/Sub", "Snapshot", project_id, snapshot_name
-                    ),
-                }
-            )
+            try:
+                snapshot_name = snapshot.get("name")
+                snapshot_id = self._make_snapshot_id(snapshot_name, project_id)
+                snapshot.update(
+                    {
+                        "id": snapshot_id,
+                        "project": project_id,
+                        "google_cloud_logging": self.set_google_cloud_logging(
+                            "Pub/Sub", "Snapshot", project_id, snapshot_name
+                        ),
+                    }
+                )
 
-            yield make_cloud_service(
-                name=snapshot_name,
-                cloud_service_type=self.cloud_service_type,
-                cloud_service_group=self.cloud_service_group,
-                provider=self.provider,
-                account=project_id,
-                tags=snapshot.get("labels", []),
-                data=snapshot,
-                region_code="global",
-                instance_type="",
-                instance_size=0,
-                reference={
-                    "resource_id": snapshot_id,
-                    "external_link": f"https://console.cloud.google.com/cloudpubsub/snapshot/detail/{snapshot_id}?project={project_id}",
-                },
-            )
+                cloud_services.append(
+                    make_cloud_service(
+                        name=snapshot_name,
+                        cloud_service_type=self.cloud_service_type,
+                        cloud_service_group=self.cloud_service_group,
+                        provider=self.provider,
+                        account=project_id,
+                        tags=snapshot.get("labels", []),
+                        data=snapshot,
+                        region_code="global",
+                        instance_type="",
+                        instance_size=0,
+                        reference={
+                            "resource_id": snapshot_id,
+                            "external_link": f"https://console.cloud.google.com/cloudpubsub/snapshot/detail/{snapshot_id}?project={project_id}",
+                        },
+                    )
+                )
+
+            except Exception as e:
+                _LOGGER.error(f"Error on Snapshot {snapshot.get('name')}: {e}")
+
+                error_responses.append(
+                    make_error_response(
+                        error=e,
+                        provider=self.provider,
+                        cloud_service_group=self.cloud_service_group,
+                        cloud_service_type=self.cloud_service_type,
+                    )
+                )
+        return cloud_services, error_responses
 
     @staticmethod
     def _make_snapshot_id(snapshot_name, project_id):

@@ -5,7 +5,7 @@ from cloudforet.plugin.config.global_conf import ASSET_URL
 from cloudforet.plugin.connector.pub_sub.subscription import SubscriptionConnector
 from cloudforet.plugin.manager import ResourceManager
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("spaceone")
 
 
 class SubscriptionManager(ResourceManager):
@@ -37,108 +37,132 @@ class SubscriptionManager(ResourceManager):
             options=options, secret_data=secret_data, schema=schema
         )
 
+        cloud_services = []
+        error_responses = []
         for subscription in subscription_connector.list_subscriptions():
-            subscription_name = subscription.get("name")
-            subscription_id = self._make_subscription_id(subscription_name, project_id)
-            push_config = subscription.get("pushConfig")
-            bigquery_config = subscription.get("bigqueryConfig")
-
-            subscription_display = {
-                "deliveryType": self._make_delivery_type(push_config, bigquery_config),
-                "messageOrdering": self._change_boolean_to_enabled_or_disabled(
-                    subscription.get("enableMessageOrdering")
-                ),
-                "exactlyOnceDelivery": self._change_boolean_to_enabled_or_disabled(
-                    subscription.get("enableExactlyOnceDelivery")
-                ),
-                "attachment": self._make_enable_attachment(subscription.get("topic")),
-                "retainAckedMessages": self._make_retain_yes_or_no(
-                    subscription.get("retainAckedMessages")
-                ),
-            }
-
-            if message_reduction_duration := subscription.get(
-                "messageRetentionDuration"
-            ):
-                subscription_display.update(
-                    {
-                        "retentionDuration": self._make_time_to_dhms_format(
-                            message_reduction_duration
-                        )
-                    }
+            try:
+                subscription_name = subscription.get("name")
+                subscription_id = self._make_subscription_id(
+                    subscription_name, project_id
                 )
+                push_config = subscription.get("pushConfig")
+                bigquery_config = subscription.get("bigqueryConfig")
 
-            if expiration_policy := subscription.get("expirationPolicy"):
-                ttl = self._make_time_to_dhms_format(expiration_policy.get("ttl"))
-                subscription_display.update(
-                    {
-                        "ttl": ttl,
-                        "subscriptionExpiration": self._make_expiration_description(
-                            ttl
-                        ),
-                    }
-                )
+                subscription_display = {
+                    "deliveryType": self._make_delivery_type(
+                        push_config, bigquery_config
+                    ),
+                    "messageOrdering": self._change_boolean_to_enabled_or_disabled(
+                        subscription.get("enableMessageOrdering")
+                    ),
+                    "exactlyOnceDelivery": self._change_boolean_to_enabled_or_disabled(
+                        subscription.get("enableExactlyOnceDelivery")
+                    ),
+                    "attachment": self._make_enable_attachment(
+                        subscription.get("topic")
+                    ),
+                    "retainAckedMessages": self._make_retain_yes_or_no(
+                        subscription.get("retainAckedMessages")
+                    ),
+                }
 
-            if ack_deadline_seconds := subscription.get("ackDeadlineSeconds"):
-                subscription_display.update(
-                    {
-                        "ackDeadlineSeconds": self._make_time_to_dhms_format(
-                            ack_deadline_seconds
-                        )
-                    }
-                )
+                if message_reduction_duration := subscription.get(
+                    "messageRetentionDuration"
+                ):
+                    subscription_display.update(
+                        {
+                            "retentionDuration": self._make_time_to_dhms_format(
+                                message_reduction_duration
+                            )
+                        }
+                    )
 
-            if retry_policy := subscription.get("retryPolicy"):
-                subscription_display.update(
-                    {
-                        "retryPolicy": {
-                            "description": "Retry after exponential backoff delay",
-                            "minimumBackoff": self._make_time_to_dhms_format(
-                                retry_policy.get("minimumBackoff")
-                            ),
-                            "maximumBackoff": self._make_time_to_dhms_format(
-                                retry_policy.get("maximumBackoff")
+                if expiration_policy := subscription.get("expirationPolicy"):
+                    ttl = self._make_time_to_dhms_format(expiration_policy.get("ttl"))
+                    subscription_display.update(
+                        {
+                            "ttl": ttl,
+                            "subscriptionExpiration": self._make_expiration_description(
+                                ttl
                             ),
                         }
+                    )
+
+                if ack_deadline_seconds := subscription.get("ackDeadlineSeconds"):
+                    subscription_display.update(
+                        {
+                            "ackDeadlineSeconds": self._make_time_to_dhms_format(
+                                ack_deadline_seconds
+                            )
+                        }
+                    )
+
+                if retry_policy := subscription.get("retryPolicy"):
+                    subscription_display.update(
+                        {
+                            "retryPolicy": {
+                                "description": "Retry after exponential backoff delay",
+                                "minimumBackoff": self._make_time_to_dhms_format(
+                                    retry_policy.get("minimumBackoff")
+                                ),
+                                "maximumBackoff": self._make_time_to_dhms_format(
+                                    retry_policy.get("maximumBackoff")
+                                ),
+                            }
+                        }
+                    )
+                else:
+                    subscription_display.update(
+                        {"retryPolicy": {"description": "Retry immediately"}}
+                    )
+
+                subscription.update(
+                    {
+                        "id": subscription_id,
+                        "project": project_id,
+                        "display": subscription_display,
                     }
                 )
-            else:
-                subscription_display.update(
-                    {"retryPolicy": {"description": "Retry immediately"}}
+
+                subscription.update(
+                    {
+                        "google_cloud_logging": self.set_google_cloud_logging(
+                            "Pub/Sub", "Subscription", project_id, subscription_name
+                        )
+                    }
                 )
 
-            subscription.update(
-                {
-                    "id": subscription_id,
-                    "project": project_id,
-                    "display": subscription_display,
-                }
-            )
-
-            subscription.update(
-                {
-                    "google_cloud_logging": self.set_google_cloud_logging(
-                        "Pub/Sub", "Subscription", project_id, subscription_name
+                cloud_services.append(
+                    make_cloud_service(
+                        name=subscription_name,
+                        cloud_service_type=self.cloud_service_type,
+                        cloud_service_group=self.cloud_service_group,
+                        provider=self.provider,
+                        account=project_id,
+                        tags=subscription.get("labels", []),
+                        data=subscription,
+                        region_code="global",
+                        instance_type="",
+                        instance_size=0,
+                        reference={
+                            "resource_id": subscription_id,
+                            "external_link": f"https://console.cloud.google.com/cloudpubsub/subscription/detail/{subscription_id}?project={project_id}",
+                        },
                     )
-                }
-            )
+                )
 
-            yield make_cloud_service(
-                name=subscription_name,
-                cloud_service_type=self.cloud_service_type,
-                cloud_service_group=self.cloud_service_group,
-                provider=self.provider,
-                account=project_id,
-                tags=subscription.get("labels", []),
-                data=subscription,
-                region_code="global",
-                instance_type="",
-                instance_size=0,
-                reference={
-                    "resource_id": subscription_id,
-                    "external_link": f"https://console.cloud.google.com/cloudpubsub/subscription/detail/{subscription_id}?project={project_id}",
-                },
-            )
+            except Exception as e:
+                _LOGGER.error(f"Error on Subscription {subscription.get('name')}: {e}")
+
+                error_responses.append(
+                    make_error_response(
+                        error=e,
+                        provider=self.provider,
+                        cloud_service_group=self.cloud_service_group,
+                        cloud_service_type=self.cloud_service_type,
+                    )
+                )
+        return cloud_services, error_responses
 
     def _make_time_to_dhms_format(self, duration):
         if isinstance(duration, int):

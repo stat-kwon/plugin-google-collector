@@ -5,7 +5,7 @@ from cloudforet.plugin.config.global_conf import ASSET_URL
 from cloudforet.plugin.connector.pub_sub.topic import TopicConnector
 from cloudforet.plugin.manager import ResourceManager
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger("spaceone")
 
 
 class TopicManager(ResourceManager):
@@ -37,81 +37,99 @@ class TopicManager(ResourceManager):
             options=options, secret_data=secret_data, schema=schema
         )
 
+        cloud_services = []
+        error_responses = []
         for topic in topic_connector.list_topics():
-            topic_name = topic.get("name")
-            topic_id = self._make_topic_id(topic_name, project_id)
-            labels = topic.get("labels")
-            message_retention_duration = topic.get("messageRetentionDuration")
+            try:
+                topic_name = topic.get("name")
+                topic_id = self._make_topic_id(topic_name, project_id)
+                labels = topic.get("labels")
+                message_retention_duration = topic.get("messageRetentionDuration")
 
-            subscriptions = []
-            subscription_names = topic_connector.list_subscription_names(topic_name)
-            for subscription_name in subscription_names:
-                subscription = topic_connector.get_subscription(subscription_name)
-                push_config = subscription.get("pushConfig")
-                bigquery_config = subscription.get("bigqueryConfig")
-                subscription.update(
+                subscriptions = []
+                subscription_names = topic_connector.list_subscription_names(topic_name)
+                for subscription_name in subscription_names:
+                    subscription = topic_connector.get_subscription(subscription_name)
+                    push_config = subscription.get("pushConfig")
+                    bigquery_config = subscription.get("bigqueryConfig")
+                    subscription.update(
+                        {
+                            "id": self._make_subscription_id(subscription_name),
+                            "deliveryType": self._make_delivery_type(
+                                push_config, bigquery_config
+                            ),
+                        }
+                    )
+
+                snapshots = []
+                snapshot_names = topic_connector.list_snapshot_names(topic_name)
+                for snapshot_name in snapshot_names:
+                    snapshot = topic_connector.get_snapshot(snapshot_name)
+                    snapshot.update({"id": self._make_snapshot_id(snapshot_name)})
+
+                display = {
+                    "subscriptionCount": len(subscription_names),
+                    "encryptionKey": self._get_encryption_key(topic.get("kmsKeyName")),
+                }
+                if message_retention_duration:
+                    display.update(
+                        {
+                            "retention": self._change_duration_to_dhm(
+                                message_retention_duration
+                            )
+                        }
+                    )
+
+                topic.update(
                     {
-                        "id": self._make_subscription_id(subscription_name),
-                        "deliveryType": self._make_delivery_type(
-                            push_config, bigquery_config
-                        ),
+                        "topic_id": topic_id,
+                        "project": project_id,
+                        "messageRetentionDuration": message_retention_duration,
+                        "subscriptions": subscriptions,
+                        "snapshots": snapshots,
+                        "display": display,
                     }
                 )
 
-            snapshots = []
-            snapshot_names = topic_connector.list_snapshot_names(topic_name)
-            for snapshot_name in snapshot_names:
-                snapshot = topic_connector.get_snapshot(snapshot_name)
-                snapshot.update({"id": self._make_snapshot_id(snapshot_name)})
-
-            display = {
-                "subscriptionCount": len(subscription_names),
-                "encryptionKey": self._get_encryption_key(topic.get("kmsKeyName")),
-            }
-            if message_retention_duration:
-                display.update(
+                topic.update(
                     {
-                        "retention": self._change_duration_to_dhm(
-                            message_retention_duration
+                        "google_cloud_logging": self.set_google_cloud_logging(
+                            "Pub/Sub", "Topic", project_id, topic_name
                         )
                     }
                 )
 
-            topic.update(
-                {
-                    "topic_id": topic_id,
-                    "project": project_id,
-                    "messageRetentionDuration": message_retention_duration,
-                    "subscriptions": subscriptions,
-                    "snapshots": snapshots,
-                    "display": display,
-                }
-            )
-
-            topic.update(
-                {
-                    "google_cloud_logging": self.set_google_cloud_logging(
-                        "Pub/Sub", "Topic", project_id, topic_name
+                cloud_services.append(
+                    make_cloud_service(
+                        name=topic_name,
+                        cloud_service_type=self.cloud_service_type,
+                        cloud_service_group=self.cloud_service_group,
+                        provider=self.provider,
+                        account=project_id,
+                        tags=labels,
+                        data=topic,
+                        region_code="global",
+                        instance_type="",
+                        instance_size=0,
+                        reference={
+                            "resource_id": topic_id,
+                            "external_link": f"https://console.cloud.google.com/cloudpubsub/topic/detail/{topic_id}?project={project_id}",
+                        },
                     )
-                }
-            )
+                )
 
-            yield make_cloud_service(
-                name=topic_name,
-                cloud_service_type=self.cloud_service_type,
-                cloud_service_group=self.cloud_service_group,
-                provider=self.provider,
-                account=project_id,
-                tags=labels,
-                data=topic,
-                region_code="global",
-                instance_type="",
-                instance_size=0,
-                reference={
-                    "resource_id": topic_id,
-                    "external_link": f"https://console.cloud.google.com/cloudpubsub/topic/detail/{topic_id}?project={project_id}",
-                },
-            )
+            except Exception as e:
+                _LOGGER.error(f"Error on Topic {topic.get('name')}: {e}")
+
+                error_responses.append(
+                    make_error_response(
+                        error=e,
+                        provider=self.provider,
+                        cloud_service_group=self.cloud_service_group,
+                        cloud_service_type=self.cloud_service_type,
+                    )
+                )
+        return cloud_services, error_responses
 
     def _change_duration_to_dhm(self, duration):
         seconds, _ = duration.split("s")
