@@ -32,7 +32,7 @@ class VPCNetworkManager(ResourceManager):
                 "spaceone:icon": f"{ASSET_URL}/VPC.svg",
                 "spaceone:display_name": "VPCNetwork",
             },
-            labels=["Application Integration"],
+            labels=["Networking"],
         )
 
     def create_cloud_service(self, options, secret_data, schema):
@@ -68,29 +68,29 @@ class VPCNetworkManager(ResourceManager):
                         if network.get("autoCreateSubnetworks")
                         else "Custom",
                         "project": secret_data["project_id"],
-                        "global_dynamic_route": self._get_global_dynamic_route(
+                        "globalDynamicRoute": self._get_global_dynamic_route(
                             network, "not_mode"
                         ),
-                        "dynamic_routing_mode": self._get_global_dynamic_route(
+                        "dynamicRoutingMode": self._get_global_dynamic_route(
                             network, "mode"
                         ),
-                        "subnet_creation_mode": "Auto"
+                        "subnetCreationMode": "Auto"
                         if network.get("autoCreateSubnetworks")
                         else "Custom",
-                        "ip_address_data": self.get_internal_ip_address_in_use(
+                        "ipAddressData": self.get_internal_ip_address_in_use(
                             network, regional_address
                         ),
                         "peerings": peerings,
-                        "route_data": {
-                            "total_number": len(matched_route),
+                        "routeData": {
+                            "totalNumber": len(matched_route),
                             "route": matched_route,
                         },
-                        "firewall_data": {
-                            "total_number": len(matched_firewall),
+                        "firewallData": {
+                            "totalNumber": len(matched_firewall),
                             "firewall": matched_firewall,
                         },
-                        "subnetwork_data": {
-                            "total_number": len(matched_subnets),
+                        "subnetworkData": {
+                            "totalNumber": len(matched_subnets),
                             "subnets": matched_subnets,
                         },
                     }
@@ -98,7 +98,7 @@ class VPCNetworkManager(ResourceManager):
 
                 _name = network.get("name", "")
 
-                self.set_region_code("global")
+                self.set_region_code(region.get("region_code"))
                 cloud_services.append(
                     make_cloud_service(
                         name=_name,
@@ -140,15 +140,15 @@ class VPCNetworkManager(ResourceManager):
                 users = ip_address.get("users")
                 ip_address.update(
                     {
-                        "subnet_name": network.get("name"),
-                        "ip_version_display": self._valid_ip_address(
+                        "subnetName": network.get("name"),
+                        "ipVersionDisplay": self._valid_ip_address(
                             ip_address.get("address")
                         ),
                         "region": self.get_param_in_url(url_region, "regions")
                         if url_region
                         else "global",
-                        "used_by": self._get_parse_users(users) if users else ["None"],
-                        "is_ephemeral": "Static",
+                        "usedBy": self._get_parse_users(users) if users else ["None"],
+                        "isEphemeral": "Static",
                     }
                 )
 
@@ -180,12 +180,12 @@ class VPCNetworkManager(ResourceManager):
                 ex_route = "Import subnet routes with public IP"
 
             display = {
-                "your_network": network.get("name", ""),
-                "peered_network": self.get_param_in_url(url_network, "networks"),
-                "project_id": self.get_param_in_url(url_network, "projects"),
-                "state_display": peer.get("state").capitalize(),
-                "ex_custom_route": ex_custom,
-                "ex_route_public_ip_display": ex_route,
+                "yourNetwork": network.get("name", ""),
+                "peeredNetwork": self.get_param_in_url(url_network, "networks"),
+                "projectId": self.get_param_in_url(url_network, "projects"),
+                "stateDisplay": peer.get("state").capitalize(),
+                "exCustomRoute": ex_custom,
+                "exRoutePublicIpDisplay": ex_route,
             }
             peer.update({"display": display})
             updated_peering.append(peer)
@@ -228,7 +228,7 @@ class VPCNetworkManager(ResourceManager):
 
                 route.update(
                     {
-                        "next_hop": next_hop,
+                        "nextHop": next_hop,
                     }
                 )
                 route_vos.append(route)
@@ -243,10 +243,10 @@ class VPCNetworkManager(ResourceManager):
                 subnet.update(
                     {
                         "region": self.get_param_in_url(url_region, "regions"),
-                        "google_access": "On"
+                        "googleAccess": "On"
                         if subnet.get("privateIpGoogleAccess")
                         else "Off",
-                        "flow_log": "On" if log_config.get("enable") else "Off",
+                        "flowLog": "On" if log_config.get("enable") else "Off",
                     }
                 )
                 matched_subnet.append(subnet)
@@ -260,7 +260,7 @@ class VPCNetworkManager(ResourceManager):
             if network == firewall.get("network", ""):
                 target_tag = firewall.get("targetTags", [])
                 filter_range = ", ".join(firewall.get("sourceRanges", ""))
-                log_config = firewall.get("log_config", {})
+                log_config = firewall.get("logConfig", {})
 
                 protocol_port = []
                 flag = "allowed" if "allowed" in firewall else "denied"
@@ -271,14 +271,12 @@ class VPCNetworkManager(ResourceManager):
                         protocol_port.append(f"{ip_protocol}: {port}")
 
                 display = {
-                    "type_display": "Ingress"
+                    "typeDisplay": "Ingress"
                     if firewall.get("direction") == "INGRESS"
                     else "Egress",
-                    "target_display": ["Apply to all"]
-                    if not target_tag
-                    else target_tag,
+                    "targetDisplay": ["Apply to all"] if not target_tag else target_tag,
                     "filter": f"IP ranges: {filter_range}",
-                    "protocols_port": protocol_port,
+                    "protocolsPort": protocol_port,
                     "action": "Allow" if "allowed" in firewall else "Deny",
                     "logs": "On" if log_config.get("enable") else "Off",
                 }
