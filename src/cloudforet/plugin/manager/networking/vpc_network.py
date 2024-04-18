@@ -216,7 +216,7 @@ class VPCNetworkManager(ResourceManager):
                     url_next_hop_gateway = route.get("nextHopGateway", "")
                     target = self.get_param_in_url(url_next_hop_gateway, "gateways")
                     next_hop = f"{target} internet gateway"
-                # TODO: some type is ipaddress => 10.128.0.56
+
                 elif "nextHopIlb" in route:
                     url_next_hop_ilb = route.get("nextHopIlb", "")
                     target = self.get_param_in_url(url_next_hop_ilb, "forwardingRules")
