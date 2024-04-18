@@ -1,0 +1,19 @@
+search:
+  fields:
+    - ID: data.id
+
+table:
+  sort:
+    key: data.id
+    desc: true
+  fields:
+    - Location Type: data.location.locationType
+    - Location: data.location.locationDisplay
+
+tabs.0:
+  name: Details
+  items:
+    - name: Schema
+      type: item
+      fields:
+        - Schema ID: data.id
