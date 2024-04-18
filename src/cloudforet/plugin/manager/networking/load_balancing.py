@@ -28,6 +28,7 @@ class LoadBalancingManager(ResourceManager):
             provider=self.provider,
             metadata_path=self.metadata_path,
             is_primary=True,
+            is_major=True,
             service_code="Networking",
             tags={
                 "spaceone:icon": f"{ASSET_URL}/Load_Balancing.svg",

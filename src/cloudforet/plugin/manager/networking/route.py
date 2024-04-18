@@ -27,7 +27,6 @@ class RouteManager(ResourceManager):
             group=self.cloud_service_group,
             provider=self.provider,
             metadata_path=self.metadata_path,
-            is_primary=True,
             service_code="Networking",
             tags={"spaceone:icon": f"{ASSET_URL}/Route.svg"},
             labels=["Networking"],
