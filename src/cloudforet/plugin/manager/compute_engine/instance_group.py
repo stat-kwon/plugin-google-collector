@@ -28,7 +28,7 @@ class InstanceGroupManager(ResourceManager):
             group=self.cloud_service_group,
             provider=self.provider,
             metadata_path=self.metadata_path,
-            is_primary=True,
+            is_major=True,
             service_code="Compute Engine",
             tags={"spaceone:icon": f"{ASSET_URL}/Compute_Engine.svg"},
             labels=["Compute"],
