@@ -131,7 +131,6 @@ class MachineImageManager(ResourceManager):
                         cloud_service_type=self.cloud_service_type,
                     )
                 )
-        print(cloud_services)
         return cloud_services, error_responses
 
     def get_disks(self, instance, boot_image):
