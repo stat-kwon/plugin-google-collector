@@ -4,9 +4,6 @@ from urllib.parse import urlparse
 from spaceone.inventory.plugin.collector.lib import *
 
 from cloudforet.plugin.config.global_conf import ASSET_URL
-from cloudforet.plugin.connector.compute_engine.instance_group import (
-    InstanceGroupConnector,
-)
 from cloudforet.plugin.connector.compute_engine.instance_template import (
     InstanceTemplateConnector,
 )
