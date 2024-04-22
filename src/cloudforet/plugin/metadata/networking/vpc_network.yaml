@@ -25,7 +25,9 @@ table:
         - "Off": red.500
           type: state
     - Description: data.description
+      is_optional: true
     - IPv4 Range: data.ipv4Range
+      is_optional: true
     - Creation Time: data.creationTimestamp
       type: datetime
 

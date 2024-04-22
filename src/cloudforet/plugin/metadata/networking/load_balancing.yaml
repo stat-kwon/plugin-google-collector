@@ -1,0 +1,278 @@
+search:
+  fields:
+    - ID: data.id
+    - Name: data.name
+    - Type: data.type
+    - Source: data.internalOrExternal
+    - Protocol: data.protocol
+    - Region: data.region
+    - Creation Time: data.creationTimestamp
+      type: datetime
+
+table:
+  sort:
+    key: data.id
+    desc: true
+  fields:
+    - Type: data.type
+    - Source: data.internalOrExternal
+    - Protocol: data.protocol
+      type: enum
+      enums:
+        - HTTP: blue.500
+        - HTTPS: blue.500
+        - TCP: indigo.500
+        - UDP: indigo.500
+        - ESP: coral.600
+        - AH: coral.600
+        - SCTP: coral.600
+        - ICMP: coral.600
+        - L3_DEFAULT: coral.600
+        - UnKnown: coral.600
+    - Region: data.region
+    - Creation Time: data.creationTimestamp
+      type: datetime
+
+tabs.0:
+  name: Forwarding Rule
+  type: table
+  root_path: data.forwardingRules
+  fields:
+    - Id: id
+    - Name: name
+    - Description: description
+    - Source: type
+      type: enum
+      enums:
+        - Global: coral.600
+        - Regional: peacock.500
+    - Region: region
+    - IP Address: ipAddress
+    - Protocol: ipProtocol
+      type: enum
+      enums:
+        - HTTP: blue.500
+        - HTTPS: blue.500
+        - TCP: indigo.500
+        - UDP: indigo.500
+        - ESP: coral.600
+        - AH: coral.600
+        - SCTP: coral.600
+        - ICMP: coral.600
+        - L3_DEFAULT: coral.600
+        - UnKnown: coral.600
+    - Port Range: portRange
+    - Ports: ports
+    - Target: target
+    - Load Balancing Scheme: loadBalancingScheme
+      type: enum
+      enums:
+        - EXTERNAL: green.500
+        - EXTERNAL_MANAGED: green.500
+        - INTERNAL: indigo.500
+        - INTERNAL_MANAGED: indigo.500
+        - INTERNAL_SELF_MANAGED: indigo.500
+    - Subnetwork: subnetwork
+    - Network: network
+    - Backend Service: backendService
+    - Service Label: serviceLabel
+    - Service Name: serviceName
+    - Network Tier: networkTier
+    - IP Version: ipVersion
+    - All Port: data.allPorts
+      type: enum
+      enums:
+        - "true": green.500
+        - "false": red.500
+    - All Global Access: data.allGlobalAccess
+      type: enum
+      enums:
+        - "true": green.500
+        - "false": red.500
+    - Created At: data.creationTimestamp
+      type: datetime
+
+tabs.1:
+  name: Target Proxy
+  type: item
+  fields:
+    - Name: name
+    - Proxy Type: type
+      type: enum
+      enums:
+        - HTTP: blue.500
+        - HTTPS: blue.500
+        - SSL: yellow.500
+        - TCP: indigo.500
+        - GRPC: coral.500
+    - Description: description
+
+tabs.2:
+  name: Url Map
+  type: table
+  root_path: data.urlmap
+  fields:
+    - ID: id
+    - Name: name
+    - Description: description
+    - Host Rule: hostRule
+    - Created At: creationTimestamp
+      type: datetime
+
+tabs.3:
+  name: Certificate
+  type: table
+  root_path: data.certificates
+  fields:
+    - ID: id
+    - Name: name
+    - Domain: domains
+      type: list
+    - Type: data.allGlobalAccess
+      type: enum
+      enums:
+        - MANAGED: green.500
+        - SELF_MANAGED: coral.500
+    - Description: description
+    - Certificate: certificate
+    - Subnet Alternative Name: subjectAlternativeNames
+      type: list
+    - Expire Time: expireTime
+    - Region: region
+    - Created At: creationTimestamp
+      type: datetime
+
+tabs.4:
+  name: Backend Service
+  type: table
+  root_path: data.backendServices
+  fields:
+    - ID: id
+    - Name: name
+    - Description: description
+    - Protocol: data.protocol
+      type: enum
+      enums:
+        - HTTP: blue.500
+        - HTTP2: blue.500
+        - HTTPS: blue.500
+        - SSL: yellow.500
+        - TCP: indigo.500
+        - UDP: indigo.500
+        - GRPC: coral.500
+    - Backends: backends
+      type: list
+    - Health Checks: healthChecks
+      type: list
+    - TimeOut Seconds: timeoutSec
+    - Port: port
+    - Port Name: portName
+    - Type: data.enableCdn
+    - Session Affinity: data.sessionAffinity
+      type: enum
+      enums:
+        - CLIENT_IP: green.500
+        - CLIENT_IP_PROTO: green.500
+        - CLIENT_IP_PORT_PROTO: green.500
+        - INTERNAL_MANAGED: indigo.500
+        - INTERNAL_SELF_MANAGED: indigo.500
+        - GENERATED_COOKIE: coral.500
+        - HEADER_FIELD: coral.500
+        - HTTP_COOKIE: coral.500
+        - NONE: red.500
+    - Affinity Cookie TTL Seconds: affinityCookieTtlSec
+    - FailOver Policy: failoverPolicy
+    - LoadBalancing Scheme: data.loadBalancingScheme
+      type: enum
+      enums:
+        - EXTERNAL: green.500
+        - INTERNAL: indigo.500
+        - INTERNAL_MANAGED: indigo.500
+        - INTERNAL_SELF_MANAGED: indigo.500
+    - Log Config: logConfig
+    - Connection Draining: connectionDraining
+    - Created At: creationTimestamp
+      type: datetime
+
+tabs.5:
+  name: Backend Bucket
+  type: table
+  root_path: data.backendBuckets
+  fields:
+    - Id: id
+    - Name: name
+    - Description: description
+    - Bucket Name: bucketName
+    - CDN: data.enableCdn
+      type: enum
+      enums:
+        - "true": green.500
+        - "false": red.500
+    - CDN Policy: cdnPolicy
+    - Custom Response Headers: customResponseHeaders
+      type: list
+    - Created At: creationTimestamp
+      type: datetime
+
+tabs.6:
+  name: Target Pool
+  type: table
+  root_path: data.targetPools
+  fields:
+    - Id: id
+    - Name: name
+    - Description: description
+    - Health Check: healthChecks
+      type: list
+    - Instance: instances
+    - LoadBalancing Scheme: data.sessionAffinity
+      type: enum
+      enums:
+        - CLIENT_IP: green.500
+        - CLIENT_IP_PROTO: green.500
+        - NONE: red.500
+    - FailOver Ratio: failoverRatio
+    - Backup Pool: backupPool
+
+tabs.7:
+  name: Health Check
+  type: table
+  root_path: data.healthChecks
+  fields:
+    - Id: id
+    - Name: name
+    - Description: description
+    - Type: data.type
+      type: enum
+      enums:
+        - HTTP: blue.500
+        - HTTP2: blue.500
+        - HTTPS: blue.500
+        - SSL: yellow.500
+        - TCP: indigo.500
+    - Check Interval Seconds: checkIntervalSec
+    - TimeOut Seconds: timeoutSec
+    - UnHealthy Threshold: unhealthyThreshold
+    - Healthy Threshold: healthyThreshold
+    - Region: region
+    - Log Config: logConfig
+    - Created At: creationTimestamp
+      type: datetime
+
+tabs.8:
+  name: Legacy Health Check
+  type: table
+  root_path: data.legacyHealthChecks
+  fields:
+    - Id: id
+    - Name: name
+    - Description: description
+    - Host: host
+    - Port: port
+    - Request Path: requestPath
+    - Check Interval Seconds: checkIntervalSec
+    - Timeout Seconds: timeoutSec
+    - UnHealthy Threshold: unhealthyThreshold
+    - Healthy Threshold: healthyThreshold
+    - Created At: creationTimestamp
+      type: datetime

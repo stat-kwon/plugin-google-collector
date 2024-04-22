@@ -1,0 +1,57 @@
+search:
+  fields:
+    - ID: data.id
+    - Name: data.name
+    - Priority: data.priority
+    - Instance Tags: data.tags
+    - Network: data.display.networkDisplay
+    - Creation Time: data.creationTimestamp
+      type: datetime
+
+table:
+  sort:
+    key: data.id
+    desc: true
+  fields:
+    - Description: data.description
+    - Destination IP Range: data.destRange
+    - Priority: data.priority
+    - Instance tags: data.display.instanceTagsOnList
+    - Network: data.display.networkDisplay
+    - Next Hop: data.display.nextHop
+    - Creation Time: data.creationTimestamp
+      type: datetime
+
+
+tabs.0:
+  name: Route Details
+  type: item
+  fields:
+    - Name: data.id
+    - Name: data.name
+    - Description: data.description
+    - Network: data.display.networkDisplay
+    - Destination IP Address Range: data.destRange
+    - Priority: data.priority
+    - Instance Tags (Detail): data.display.instanceTags
+      type: list
+    - Creation Time: data.creationTimestamp
+      type: datetime
+
+tabs.1:
+  name: Applicable to Instances
+  type: table
+  root_path: data.applicableInstance
+  fields:
+    - Name: name
+    - Subnetwork: subnetwork
+    - Internal IP: address
+    - Tags: tags
+      type: list
+    - Service Accounts: serviceAccounts
+      type: list
+    - Project: project
+    - Label: labelsDisplay
+      type: list
+    - Creation Time: creationTimestamp
+      type: datetime
