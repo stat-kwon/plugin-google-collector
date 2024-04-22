@@ -22,3 +22,12 @@ from cloudforet.plugin.manager.networking.firewall import FirewallManager
 from cloudforet.plugin.manager.networking.external_ip_address import (
     ExternalIPAddressManager,
 )
+
+from cloudforet.plugin.manager.compute_engine.disk import DiskManager
+from cloudforet.plugin.manager.compute_engine.instance_group import InstanceGroupManager
+from cloudforet.plugin.manager.compute_engine.instance_template import (
+    InstanceTemplateManager,
+)
+from cloudforet.plugin.manager.compute_engine.machine_image import MachineImageManager
+from cloudforet.plugin.manager.compute_engine.snapshot import SnapshotManager
+from cloudforet.plugin.manager.compute_engine.instance import VMInstanceManager
