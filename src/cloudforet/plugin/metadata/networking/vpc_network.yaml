@@ -1,19 +1,122 @@
 search:
   fields:
     - ID: data.id
+    - Name: data.name
+    - description: data.description
+    - firewall: data.firewallData.firewall
+    - route: data.routeData.route
+    - subnetwork: data.subnetworkData.subnets
+    - Creation Time: data.creationTimestamp
+      type: datetime
 
 table:
   sort:
     key: data.id
     desc: true
   fields:
-    - Location Type: data.location.locationType
-    - Location: data.location.locationDisplay
+    - Number of Subnet: data.subnetworkData.totalNumber
+    - Maximum transmission unit: data.mtu
+    - Mode: data.subnetCreationMode
+    - Global Dynamic Routing: data.globalDynamicRoute
+      type: enum
+      enums:
+        - "On": green.500
+          type: state
+        - "Off": red.500
+          type: state
+    - Description: data.description
+    - IPv4 Range: data.ipv4Range
+    - Creation Time: data.creationTimestamp
+      type: datetime
 
 tabs.0:
-  name: Details
-  items:
-    - name: Schema
-      type: item
-      fields:
-        - Schema ID: data.id
+  name: VPC Network Details
+  type: item
+  fields:
+    - Name: data.name
+    - Description: data.description
+    - Maximum transmission unit: data.mtu
+    - Mode: data.subnetCreationMode
+    - Global Dynamic Routing: data.globalDynamicRoute
+      type: enum
+      enums:
+        - "On": green.500
+          type: state
+        - "Off": red.500
+          type: state
+    - Dynamic Routing mode: data.dynamicRoutingMode
+    - Creation Time: data.creationTimestamp
+      type: datetime
+
+tabs.1:
+  name: Subnets
+  type: table
+  root_path: data.subnetworkData.subnets
+  fields:
+    - Name: name
+    - Region: region
+    - Ip Address Ranges: ipCidrRange
+    - Gateway: gatewayAddress
+    - Private Google Access: googleAccess
+    - Flow logs: flowLog
+
+tabs.2:
+  name: Static Internal IP Addresses
+  type: table
+  root_path: data.ipAddressData
+  fields:
+    - Name: name
+    - Internal Ip Address: address
+    - Subnetwork: subnetName
+    - Region: region
+    - Version: ipVersionDisplay
+    - In Used By: usedBy
+      type: list
+
+tabs.3:
+  name: Firewall Rules
+  type: table
+  root_path: data.firewallData.firewall
+  fields:
+    - Name: name
+    - Type: display.typeDisplay
+    - Targets: display.targetDisplay
+      type: list
+    - Filters: display.filter
+    - Protocols / Ports: display.protocolsPort
+      type: list
+    - Action On Match: data.action
+    - Priority: priority
+    - Logs: display.Logs
+
+tabs.4:
+  name: Routes
+  type: table
+  root_path: data.routeData.route
+  fields:
+    - Name: name
+    - Description: description
+    - Destination IP Range: destRange
+    - Priority: priority
+    - Instance Tags: tags
+      type: list
+    - Next Hop: nextHop
+
+tabs.5:
+  name: VPC Network Peering
+  type: table
+  root_path: data.peerings
+  fields:
+    - Name: name
+    - Your VPC Network: display.yourNetwork
+    - Peered VPC Network: display.peeredNetwork
+    - Peered Project ID: display.projectId
+    - Status: display.stateDisplay
+      type: enum
+      enums:
+        - Active: indigo.500
+          type: state
+        - Inactive: coral.600
+          type: state
+    - Exchange Custom Routes: display.exCustomRoute
+    - Exchange Subnet Routes With Public IP: display.exRoutePublicIpDisplay
