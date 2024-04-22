@@ -1,0 +1,109 @@
+search:
+  fields:
+    - ID: data.id
+    - Name: data.name
+    - Status: data.status
+    - Disk Type: data.diskType
+    - Size (Bytes): data.size
+    - Project: data.project
+    - Zone: data.zone
+    - Region: regionCode
+    - Creation Time: data.creationTimestamp
+      type: datetime
+
+table:
+  sort:
+    key: data.id
+    desc: true
+  fields:
+    - ID: data.id
+    - Zone: data.zone
+    - Source Image: data.sourceImageDisplay
+    - Disk Type: data.diskType
+      type: enum
+      enums:
+        - local-ssd: blue.500
+        - pd-balanced: indigo.500
+        - pd-ssd: yellow.500
+        - pd-standard: red.500
+    - Size (Bytes): data.size
+      type: size
+    - In Used By: data.inUsedBy
+      type: list
+    - Snapshot Schedule: data.snapshotScheduleDisplay
+      type: list
+    - Source Image: data.sourceImageDisplay
+      is_optional: true
+    - Read IOPS: data.readIops
+      is_optional: true
+    - Write IOPS: data.writeIops
+      is_optional: true
+    - Read Throughput(MB/s): data.readThroughput
+      is_optional: true
+    - Write Throughput(MB/s): data.writeThroughput
+      is_optional: true
+    - Creation Time: data.creationTimestamp
+      type: datetime
+
+tabs.0:
+  name: Properties
+  type: item
+  fields:
+    - ID: data.id
+    - Name: data.name
+    - Disk Type: data.diskType
+      type: enum
+      enums:
+        - local-ssd: blue.500
+        - pd-balanced: indigo.500
+        - pd-ssd: yellow.500
+        - pd-standard: red.500
+    - Zone: data.zone
+    - In Used By: data.inUsedBy
+    - Snapshot Schedule: data.snapshotScheduleDisplay
+    - Encryption Type: data.encryption
+      type: enum
+      enums:
+        - "Google managed": green.500
+        - "Customer managed": yellow.500
+        - "Customer supplied": coral.500
+    - Source Image: data.sourceImageDisplay
+    - Last Attach Time: data.lastAttachTimestamp
+      type: datetime
+    - Last Detach Time: data.lastDetachTimestamp
+      type: datetime
+    - Creation Time: data.creationTimestamp
+      type: datetime
+
+tabs.1:
+  name: Estimated Performance
+  type: item
+  fields:
+    - Read IOPS: data.readIops
+    - Write IOPS: data.writeIops
+    - Read Throughput(MB/s): data.readThroughput
+    - Write Throughput(MB/s): data.writeThroughput
+
+tabs.2:
+  name: Snapshot Schedule
+  type: table
+  root_path: data.snapshotSchedule
+  fields:
+    - ID: id
+    - Name: name
+    - Region: region
+    - Schedule Frequency (UTC): snapshotSchedulePolicy.scheduleDisplay
+      type: list
+    - Auto-delete Snapshots After: snapshotSchedulePolicy.retentionPolicy.maxRetentionDaysDisplay
+    - Storage Locations: storageLocations
+      type: list
+    - Creation Time: creationTimestamp
+      type: datetime
+
+tabs.3:
+  name: Labels
+  type: table
+  root_path: data.labels
+  fields:
+    - Key: key
+    - Value: value

@@ -1,0 +1,172 @@
+search:
+  fields:
+    - Name: data.name
+    - Instance Counts: data.name
+    - Minimum Number of Replicas: data.autoscaler.autoscalingPolicy.minNumReplicas
+    - Maximum Number of Replicas: data.autoscaler.autoscalingPolicy.maxNumReplicas
+    - Recommended Size: data.autoscaler.recommendedSize
+    - Template: data.template.name
+    - Region: regionCode
+    - Zone: data.zone
+    - Creation Time: data.creationTimestamp
+      type: datetime
+
+table:
+  sort:
+    key: data.id
+    desc: true
+  fields:
+    - Instance Group ID: data.id
+      is_optional: true
+    - Instances: data.instanceCounts
+    - Type: data.instanceGroupType
+      type: enum
+      enums:
+        - "STATELESS": blue.500
+        - "STATEFUL": indigo.500
+        - "UNMANAGED": red.500
+    - Min Replicas: data.autoscaler.autoscalingPolicy.minNumReplicas
+    - Max Replicas: data.autoscaler.autoscalingPolicy.maxNumReplicas
+    - Recommended Size: data.autoscaler.recommendedSize
+    - Template: data.template.name
+    - Autoscaling Mode: data.autoscaler.autoscalingPolicy.mode
+      type: enum
+      enums:
+        - "ON": green.500
+        - "OFF": red.500
+    - Autoscaling: data.autoscalingDisplay
+    - Project: data.project
+      is_optional: true
+    - Region: data.displayLocation.region
+      is_optional: true
+    - Zone: data.displayLocation.zone
+      is_optional: true
+    - Network: data.network
+      is_optional: true
+    - Subnet: data.subnetwork
+      is_optional: true
+    - Description: data.description
+      is_optional: true
+    - Creation Time: data.creationTimestamp
+      type: datetime
+
+tabs.0:
+  name: Instance Group
+  type: item
+  fields:
+    - Resource ID: data.id
+    - Name: data.name
+    - Type: data.instanceGroupType
+      type: enum
+      enums:
+        - "STATELESS": blue.500
+        - "STATEFUL": indigo.500
+        - "UNMANAGED": red.500
+    - Project: data.project
+    - Region: data.displayLocation.region
+    - Zone: data.displayLocation.zone
+    - Network: data.network
+    - Subnet: data.subnetwork
+    - Description: data.description
+    - Instance Counts: data.instanceCounts
+    - Min Replicas: data.autoscaler.autoscalingPolicy.minNumReplicas
+    - Max Replicas: data.autoscaler.autoscalingPolicy.maxNumReplicas
+    - Recommended Size: data.autoscaler.recommendedSize
+    - Self Link: data.selfLink
+    - Creation Time: data.creationTimestamp
+      type: datetime
+
+tabs.1:
+  name: Instance Template
+  type: item
+  fields:
+    - Resource ID: data.template.id
+    - Name: data.template.name
+    - Description: data.template.description
+    - Self Link: data.template.selfLink
+    - Creation Time: data.creationTimestamp
+      type: datetime
+
+tabs.2:
+  name: Auto Scaler
+  type: item
+  fields:
+    - Resource ID: data.autoscaler.id
+    - Name: data.autoscaler.name
+    - Description: data.autoscaler.description
+    - Status: data.autoscaler.status
+      type: enum
+      enums:
+        - ACTIVE: green.500
+          type: state
+        - PENDING: yellow.500
+          type: state
+        - DELETING: yellow.500
+          type: state
+        - ERROR: red.500
+          type: state
+    - Status Detail Message: data.autoscaler.statusDetails
+      type: list
+    - Self Link: data.autoscaler.selfLink
+    - Creation Time: data.autoscaler.creationTimestamp
+      type: datetime
+
+tabs.3:
+  name: Auto Scaling Policy
+  type: item
+  fields:
+    - Mode: data.autoscaler.autoscalingPolicy.mode
+      type: enum
+      enums:
+        - "ON": green.500
+        - "OFF": red.500
+    - Minimum Replica Counts: data.autoscaler.autoscalingPolicy.minNumReplicas
+    - Maximum Replica Counts: data.autoscaler.autoscalingPolicy.maxNumReplicas
+    - Cool Down Period (Seconds): data.autoscaler.autoscalingPolicy.coolDownPeriodSec
+    - CPU Utilization: data.autoscaler.autoscalingPolicy.cpuUtilization.utilizationTarget
+    - Load Balancing Utilization: data.autoscaler.autoscalingPolicy.loadbalancingUtilization.utilizationTarget
+
+tabs.4:
+  name: AutoHealing
+  type: table
+  root_path: data.instanceGroupManager.autoHealingPolicies
+  fields:
+    - Health Check: healthCheck
+    - Initial Delay (Seconds): initialDelaySec
+
+tabs.5:
+  name: Instance
+  type: table
+  root_path: data.instances
+  fields:
+    - Name: name
+    - Status: status
+      type: enum
+      enums:
+        - RUNNING: green.500
+          type: state
+        - STAGING: yellow.500
+          type: state
+        - PROVISIONING: yellow.500
+          type: state
+        - SUSPENDING: yellow.500
+          type: state
+        - REPAIRING: yellow.500
+          type: state
+        - STOPPING: yellow.500
+          type: state
+        - SUSPENDING: yellow.500
+          type: state
+        - TERMINATED: gray.500
+          type: state
+        - SUSPENDED: red.500
+          type: state
+    - Self Link: instance
+    - Ports (Name): namePorts
+      type: list
+    - Ports: namePorts
+      type: list
+
+
+
+
