@@ -1,0 +1,63 @@
+search:
+  fields:
+    - ID: data.id
+    - Name: data.name
+    - IP Address: data.address
+    - Version: data.ipVersionDisplay
+    - Network Tier: data.networkTierDisplay
+    - Creation Time: data.creationTimestamp
+      type: datetime
+
+table:
+  sort:
+    key: data.id
+    desc: true
+  fields:
+    - External Address: data.address
+    - Region: data.region
+    - Type: data.isEphemeral
+      type: enum
+      enums:
+        - "Ephemeral": coral.500
+        - "Static": indigo.500
+    - Version: data.ipVersionDisplay
+      type: enum
+      enums:
+        - IPv4: blue.500
+        - IPv6: indigo.500
+    - In Used By: data.usedBy
+      type: list
+    - Network Tier: data.networkTierDisplay
+    - Creation Time: data.creationTimestamp
+      type: datetime
+
+tabs.0:
+  name: Details
+  type: item
+  fields:
+    - ID: data.id
+    - Name: data.name
+    - Version: data.statusDisplay
+      type: enum
+      enums:
+        - "Reserved": green.500
+        - "In Use": blue.500
+        - "Reserving": red.500
+    - Region: data.region
+    - Type: data.isEphemeral
+      type: enum
+      enums:
+        - "Ephemeral": coral.500
+        - "Static": indigo.500
+    - Version: data.ipVersionDisplay
+      type: enum
+      enums:
+        - IPv4: blue.500
+        - IPv6: indigo.500
+    - In Used By: data.usedBy
+      type: list
+    - In Used By (Details): data.users
+      type: list
+    - Network Tier: data.networkTierDisplay
+    - Creation Time: data.creationTimestamp
+      type: datetime

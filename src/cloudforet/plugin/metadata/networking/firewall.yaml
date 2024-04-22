@@ -1,0 +1,81 @@
+search:
+  fields:
+    - ID: data.id
+    - Name: data.name
+    - Priority: data.priority
+    - Direction: data.display.directionDisplay
+    - Action: data.display.action
+    - Creation Time: data.creationTimestamp
+      type: datetime
+
+table:
+  sort:
+    key: data.id
+    desc: true
+  fields:
+    - Logs: data.display.logs
+      type: enum
+      enums:
+        - "On": green.500
+          type: state
+        - "Off": red.500
+          type: state
+    - Network: data.display.networkDisplay
+    - Direction: data.display.directionDisplay
+    - Priority: data.priority
+    - Action On Match: data.display.action
+      type: enum
+      enums:
+        - "Allow": green.500
+          type: state
+        - "Deny": red.500
+          type: state
+    - Creation Time: data.creationTimestamp
+      type: datetime
+
+tabs.0:
+  name: Firewall Details
+  type: item
+  fields:
+    - ID: data.id
+    - Name: data.name
+    - Logs: data.display.logs
+      type: enum
+      enums:
+        - "On": green.500
+          type: state
+        - "Off": red.500
+          type: state
+    - Priority: data.priority
+    - Direction: data.display.directionDisplay
+    - Action On Match: data.display.action
+      type: enum
+      enums:
+        - "Allow": green.500
+          type: state
+        - "Deny": red.500
+          type: state
+    - Source Filter: data.sourceRanges
+      type: list
+    - Protocols and ports: data.display.protocolsPort
+      type: list
+    - Creation Time: data.creationTimestamp
+      type: datetime
+
+tabs.1:
+  name: Applicable to Instances
+  type: table
+  root_path: data.applicableInstance
+  fields:
+    - Name: name
+    - Subnetwork: subnetwork
+    - Internal IP: address
+    - Tags: tags
+      type: list
+    - Service Accounts: serviceAccounts
+      type: list
+    - Project: project
+    - Label: labelsDisplay
+      type: list
+    - Creation Time: creationTimestamp
+      type: datetime
