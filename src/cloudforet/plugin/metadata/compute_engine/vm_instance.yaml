@@ -1,0 +1,378 @@
+search:
+  fields:
+    - Server ID: serverId
+    - IP Address: data.ipAddresses
+    - Instance ID: data.compute.instanceId
+    - Instance State: data.compute.instanceState
+    - Instance Type: data.compute.instanceType
+    - Has GPU: data.display.hasGpu
+    - Total GPU Count: data.totalGpuCount
+    - GPUs: data.display.gpus
+    - Key Pair: data.compute.keypair
+    - Image: data.compute.image
+    - Availability Zone: data.compute.az
+    - OS Type: data.os.osType
+    - OS Distro: data.os.osDistro
+    - OS Architecture: data.os.osArch
+    - MAC Address: data.nics.macAddress
+    - Public IP Address: data.nics.publicIpAddress
+    - Public DNS: data.nics.tags.publicDns
+    - VPC ID: data.vpc.vpcId
+    - VPC Name: data.vpc.vpcName
+    - Subnet ID: data.subnet.subnetId
+    - Subnet Name: data.subnet.subnetName
+    - ELB Name: data.loadBalancers.name
+    - ELB DNS: data.loadBalancers.dns
+    - Auto Scaling Group: data.autoScalingGroup.name
+    - Core: data.hardware.core
+    - Memory: data.hardware.memory
+    - Account ID: account
+    - Project Group: projectGroupId
+    - Launched: launchedAt
+
+table:
+  sort:
+    key: data.id
+    desc: true
+  fields:
+    - Instance State: data.compute.instanceState
+      type: enum
+      enums:
+        - "RUNNING": green.500
+          type: state
+        - "STAGING": yellow.500
+          type: state
+        - "PROVISIONING": yellow.500
+          type: state
+        - "REPAIRING": yellow.500
+          type: state
+        - "STOPPING": yellow.500
+          type: state
+        - "SUSPENDING": yellow.500
+          type: state
+        - "SUSPENDED": red.500
+          type: state
+        - "TERMINATED": red.500
+          type: state
+    - Server ID: serverId
+      is_optional: true
+    - Instance Type: data.compute.instanceType
+    - Core: data.hardware.core
+    - Memory: data.hardware.memory
+    - Preemptible: data.compute.scheduling.preemptible
+      is_optional: true
+    - Has GPU: data.display.hasGpu
+      type: enum
+      enums:
+        - "True": green.500
+        - "False": red.500
+    - Total GPU Count: data.totalGpuCount
+      is_optional: true
+    - GPUs: data.display.gpus
+      is_optional: true
+    - Instance ID: data.compute.instanceId
+      is_optional: true
+    - Key Pair: data.compute.keypair
+      is_optional: true
+    - Image: data.compute.image
+      is_optional: true
+    - Availability Zone: data.compute.az
+    - OS Type: data.os.osType
+      is_optional: true
+    - OS: data.os.osDistro
+    - OS Architecture: data.os.osArch
+      is_optional: true
+    - Primary IP: data.primaryIpAddress
+      is_optional: true
+    - Public IP: data.compute.publicIpAddress
+      is_optional: true
+    - Public DNS: data.nics.tags.publicDns
+      is_optional: true
+    - All IP: ipAddresses
+      is_optional: true
+    - MAC Address: data.nics.macAddress
+      is_optional: true
+    - CIDR: data.nics.cidr
+      is_optional: true
+    - VPC ID: data.vpc.vpcId
+      is_optional: true
+    - VPC Name: data.vpc.vpcName
+      is_optional: true
+    - Subnet ID: data.subnet.subnetId
+      is_optional: true
+    - Subnet Name: data.subnet.subnetName
+      is_optional: true
+    - LB Name: data.loadBalancers.name
+      is_optional: true
+    - LB DNS: data.loadBalancers.dns
+      is_optional: true
+    - Managed Instance: data.googleCloud.isManagedInstance
+      is_optional: true
+    - LB DNS: data.loadBalancers.dns
+      is_optional: true
+    - Auto Scaling Group: data.autoScalingGroup.name
+      is_optional: true
+    - CPU Utilization: data.monitoring.cpu.utilization.avg
+      is_optional: true
+    - Memory Usage: data.monitoring.memory.usage.avg
+      is_optional: true
+    - Disk Read IOPS: data.monitoring.disk.readIops.avg
+      is_optional: true
+    - Disk Write IOPS: data.monitoring.disk.writeIops.avg
+      is_optional: true
+    - Disk Read Throughput: data.monitoring.disk.readThroughput.avg
+      is_optional: true
+    - Disk Write Throughput: data.monitoring.disk.writeThroughput.avg
+      is_optional: true
+    - Network Received PPS: data.monitoring.network.receivedPps.avg
+      is_optional: true
+    - Network Sent PPS: data.monitoring.network.sentPps.avg
+      is_optional: true
+    - CPU Utilization: data.monitoring.cpu.utilization.max
+      is_optional: true
+    - Memory Usage: data.monitoring.memory.usage.max
+      is_optional: true
+    - Disk Read IOPS: data.monitoring.disk.readIops.max
+      is_optional: true
+    - Disk Write IOPS: data.monitoring.disk.writeIops.max
+      is_optional: true
+    - Disk Read Throughput: data.monitoring.disk.readThroughput.max
+      is_optional: true
+    - Disk Write Throughput: data.monitoring.disk.writeThroughput.max
+      is_optional: true
+    - Network Received PPS: data.monitoring.network.receivedPps.ma
+      is_optional: true
+    - Network Sent PPS: data.monitoring.network.sentPps.max
+      is_optional: true
+    - Network Received Throughput: data.monitoring.network.receivedThroughput.max
+      is_optional: true
+    - Network Sent Throughput: data.monitoring.network.sentThroughput.max
+      is_optional: true
+    - Account ID: account
+      is_optional: true
+    - Launched: launchedAt
+      is_optional: true
+
+tabs.0:
+  name: VM Instance
+  type: item
+  fields:
+    - Account: data.compute.account
+    - Instance ID: data.compute.instanceId
+    - Instance Name: data.compute.instanceName
+    - Instance State: data.compute.instanceState
+      type: enum
+      enums:
+        - "RUNNING": green.500
+          type: state
+        - "STAGING": yellow.500
+          type: state
+        - "PROVISIONING": yellow.500
+          type: state
+        - "REPAIRING": yellow.500
+          type: state
+        - "STOPPING": yellow.500
+          type: state
+        - "SUSPENDING": yellow.500
+          type: state
+        - "SUSPENDED": red.500
+          type: state
+        - "TERMINATED": red.500
+          type: state
+    - Preemptible: data.googleCloud.scheduling.preemptible
+      type: enum
+      enums:
+        - "true": green.500
+        - "false": red.500
+    - Is Managed Instance in Instance Group: data.googleCloud.isManagedInstance
+      type: enum
+      enums:
+        - "true": green.500
+        - "false": red.500
+    - Instance Type: data.compute.instanceType
+    - Has GPU: data.display.hasGpu
+      type: enum
+      enums:
+        - "True": green.500
+        - "False": red.500
+    - Total GPU Count: data.totalGpuCount
+    - GPUs: data.display.gpus
+      type: list
+    - Image: data.compute.image
+    - Region: regionCode
+    - Availability Zone: data.compute.az
+    - Reservation Affinity: data.googleCloud.reservationAffinity
+    - Self link: data.googleCloud.selfLink
+    - Deletion Protection: data.googleCloud.deletionProtection
+      type: enum
+      enums:
+        - "true": green.500
+        - "false": red.500
+    - Public IP: data.compute.publicIpAddress
+    - IP Addresses: ipAddresses
+      type: list
+    - Affected Rules: data.compute.securityGroups
+      type: list
+    - Launched At: data.compute.launchedAt
+      type: datetime
+
+tabs.1:
+  name: VPC
+  type: item
+  fields:
+    - VPC ID: data.vpc.vpcId
+    - VPC Name: data.vpc.vpcName
+    - Subnet ID: data.subnet.subnetId
+    - Subnet Name: data.subnet.subnetName
+
+tabs.2:
+  name: InstanceGroupManager
+  type: item
+  fields:
+    - Auto Scaler: data.autoscaler.name
+    - Auto Scaler ID: data.autoscaler.id
+    - Instance Group Name: data.autoscaler.instanceGroup.name
+    - Instance Template Name: data.autoscaler.instanceGroup.instanceTemplateName
+
+
+tabs.3:
+  name: Operating System
+  type: item
+  fields:
+    - OS Type: osType
+    - OS Distribution: data.os.osDistro
+    - OS Architecture: data.os.osArch
+    - OS Version Details: data.os.details
+    - OS License: data.os.osLicense
+
+tabs.4:
+  name: Hardware
+  type: item
+  fields:
+    - Core: data.hardware.core
+    - Memory: data.hardware.memory
+    - CPU Model: data.hardware.cpuModel
+
+tabs.5:
+  name: SSH Keys
+  type: table
+  root_path: data.googleCloud.sshKeys.sshKeys
+  fields:
+    - User Name: userName
+    - Overview: displayName
+
+
+tabs.6:
+  name: SSH Key Options
+  type: item
+  fields:
+    - Block project-wide SSH keys: data.googleCloud.sshKeys.blockProjectSshKeys
+
+tabs.7:
+  name: API and Identity Management
+  type: table
+  root_path: data.googleCloud.serviceAccounts
+  fields:
+    - Service Account: serviceAccount
+    - Cloud API access scopes: displayName
+
+
+tabs.8:
+  name: Disk
+  type: table
+  root_path: data.disks
+  fields:
+    - Index: deviceIndex
+    - Name: tags.diskName
+    - Size: size
+      type: size
+    - Disk ID: tags.diskId
+    - Disk Type: tags.diskType
+      type: enum
+      enums:
+        - local-ssd: blue.500
+        - pd-balanced: indigo.500
+        - pd-ssd: yellow.500
+        - pd-standard: red.500
+    - Read IOPS: tags.readIops
+    - Write IOPS: tags.writeIops
+    - Read Throughput(MB/s): tags.readThroughput
+    - Write Throughput(MB/s): tags.writeThroughput
+    - Encrypted: tags.encrypted
+      type: enum
+      enums:
+        - "true": green.500
+        - "false": red.500
+
+tabs.9:
+  name: NIC
+  type: table
+  root_path: data.nics
+  fields:
+    - Index: deviceIndex
+    - IP Addresses: ipAddresses
+      type: list
+    - CIDR: cidr
+    - Public IP: publicIpAddress
+
+tabs.10:
+  name: Firewalls
+  type: table
+  root_path: data.securityGroup
+  fields:
+    - Priority: priority
+    - Direction: direction
+      type: enum
+      enums:
+        - "ingress": green.500
+        - "egress": red.500
+    - Action: action
+      type: enum
+      enums:
+        - "allow": green.500
+        - "deny": red.500
+    - Name: securityGroupName
+    - Firewall ID: securityGroupId
+    - Protocol: protocol
+    - Port Min.: portRangeMin
+    - Port MAx.: portRangeMax
+    - Description: description
+
+tabs.11:
+  name: Load Balancer
+  type: table
+  root_path: data.loadBalancers
+  fields:
+    - Name: name
+    - Type: type
+      type: enum
+      enums:
+        - HTTP: green.500
+        - HTTPS: green.500
+        - TCP: blue.500
+        - UDP: yellow.500
+    - Protocol: protocol
+      type: list
+    - Port: port
+      type: list
+    - Scheme: scheme
+      type: enum
+      enums:
+        - "INTERNAL": green.500
+        - "EXTERNAL": red.500
+
+
+tabs.12:
+  name: Labels
+  type: table
+  root_path: data.googleCloudLabels
+  fields:
+    - Key: key
+    - Value: value
+
+tabs.13:
+  name: Tags
+  type: table
+  root_path: data.googleCloud.tags
+  fields:
+    - Item: key

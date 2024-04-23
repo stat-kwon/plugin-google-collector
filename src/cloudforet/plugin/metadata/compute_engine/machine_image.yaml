@@ -1,0 +1,151 @@
+search:
+  fields:
+    - ID: data.id
+    - Name: data.name
+    - Source Image: data.machine.sourceImageFrom
+    - Disk Type: data.disks.tags.diskType
+    - Core: data.machine.core
+    - Memory: data.machine.memory
+    - Creation Time: data.creationTimestamp
+      type: datetime
+
+table:
+  sort:
+    key: data.id
+    desc: true
+  fields:
+    - Source Instance: data.machine.sourceImageFrom
+    - Machine Type: data.machine.machineType
+    - Storage location: data.storageLocations
+      type: list
+    - Creation Time: data.creationTimestamp
+      type: datetime
+    - ID: data.id
+      is_optional: true
+    - Description: data.description
+      is_optional: true
+    - Service accounts: data.serviceAccount.email
+      is_optional: true
+    - Total Storage Bytes: data.totalStorageBytes
+      is_optional: true
+
+tabs.0:
+  name: Instance
+  type: item
+  fields:
+    - ID: data.id
+    - Name: data.name
+    - Description: data.description
+    - Location: data.storageLocations
+      type: list
+    - Machine Type: data.machine.machineType
+    - Network Tags: data.networkTags
+      type: list
+    - Status: data.status
+      type: enum
+      enums:
+        - READY: green.500
+          type: state
+        - UPLOADING: yellow.500
+          type: state
+        - CREATING: yellow.500
+          type: state
+        - DELETING: red.500
+          type: state
+        - INVALID: red.500
+          type: state
+    - Delete Protection: data.deletionProtection
+      type: enum
+      enums:
+        - "true": green.500
+        - "false": red.500
+    - Service accounts: data.serviceAccount.email
+    - Total Storage Bytes: data.totalStorageBytes
+    - Fingerprint: data.fingerprint
+    - Self Link: data.selfLink
+    - Creation Time: data.creationTimestamp
+      type: datetime
+
+tabs.1:
+  name: Available policies
+  type: item
+  fields:
+    - Preemptibility: data.scheduling.preemptibility
+      type: enum
+      enums:
+        - "On": green.500
+        - "Off": red.500
+    - Automatic Restart: data.scheduling.automaticRestart
+      type: enum
+      enums:
+        - "On": green.500
+        - "Off": red.500
+    - Host Maintenance: data.onHostMaintenance
+      type: enum
+      enums:
+        - "MIGRATE": green.500
+        - "TERMINATE": red.500
+
+tabs.2:
+  name: Disks
+  type: table
+  root_path: data.disks
+  fields:
+    - Index: deviceIndex
+    - Name: device
+    - Size: size
+      type: size
+    - Disk Type: tags.diskType
+      type: enum
+      enums:
+        - "pd-standard": green.500
+        - "pd-ssd": blue.500
+        - "local-ssd": indigo.500
+        - "pd-balanced": green.500
+    - Mode: deviceMode
+      type: enum
+      enums:
+        - "READ_WRITE": green.500
+        - "READ_ONLY": red.500
+    - Boot Image: bootImage
+    - Encryption: encryption
+      type: enum
+      enums:
+        - "Google managed": green.500
+        - "Customer managed": indigo.500
+        - "Customer supplied": coral.500
+    - Boot Image: isBootImage
+      type: enum
+      enums:
+        - "true": green.500
+        - "false": red.500
+    - Read IOPS: tags.readIops
+    - Write IOPS: tags.writeIops
+    - Read Throughput(MB/s): tags.readThroughput
+    - Write Throughput(MB/s): tags.writeThroughput
+    - Auto Delete: tags.autoDelete
+      type: enum
+      enums:
+        - "true": green.500
+        - "false": red.500
+
+tabs.3:
+  name: Network Interface
+  type: table
+  root_path: data.networkInterfaces
+  fields:
+    - Name: name
+    - Network: networkDisplay
+    - Subnetwork: subnetworkDisplay
+    - Primary internal IP: primaryIpAddress
+    - Alias IP range: aliasIpRanges
+      type: list
+    - Public IP: publicIpAddress
+    - Access Configs: configs
+      type: list
+    - Network Tier: networkTierDisplay
+      type: list
+    - IP forwarding: ipForward
+      type: list
+
+

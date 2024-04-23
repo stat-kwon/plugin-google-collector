@@ -1,0 +1,66 @@
+search:
+  fields:
+    - ID: data.id
+    - Name: data.name
+    - Location: data.storageLocations
+    - Source Disk: data.disk.sourceDiskDisplay
+    - Creation Type: data.creationType
+    - Creation Time: data.creationTimestamp
+      type: datetime
+
+table:
+  sort:
+    key: data.id
+    desc: true
+  fields:
+    - Status: data.status
+      type: enum
+      enums:
+        - READY: green.500
+          type: state
+        - UPLOADING: yellow.500
+          type: state
+        - CREATING: yellow.500
+          type: state
+        - DELETING: red.500
+          type: state
+        - FAILED: red.500
+          type: state
+    - Location: data.storageLocations
+      type: list
+    - Snapshot Size: data.disk.storageBytes
+      type: size
+    - Creation Type: data.creationType
+    - Source Disk: data.disk.sourceDiskDisplay
+    - Disk Size: data.disk.diskSize
+      type: size
+    - Creation Time: data.creationTimestamp
+      type: datetime
+
+tabs.0:
+  name: Snapshot Details
+  type: item
+  fields:
+    - Source Disk: data.disk.sourceDiskDisplay
+    - Disk Size: data.disk.diskSize
+      type: size
+    - Snapshot Size: data.disk.storageBytes
+      type: size
+    - Locations: data.storageLocations
+      type: list
+    - Creation Time: data.creationTimestamp
+      type: datetime
+    - Encryption Type: data.encryption
+      type: enum
+      enums:
+        - "Google managed": green.500
+        - "Customer managed": indigo.500
+        - "Customer supplied": yellow.500
+
+tabs.1:
+  name: Labels
+  type: table
+  root_path: data.labels
+  fields:
+    - Key: key
+    - Value: value
